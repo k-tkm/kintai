@@ -11,3 +11,20 @@ services:
       - type: bind
         source: .
         target: /backend
+  db:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: kintai
+      MYSQL_USER: develop
+      MYSQL_PASSWORD: password
+      TZ: 'Asia/Tokyo'
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql-db:/var/lib/mysql
+    ports:
+      - 3306:3306
+volumes:
+  mysql-db:
