@@ -6,7 +6,7 @@ module.exports = {
   password: 'password',
   database: 'kintai',
   entities: ['./src/entities/*.entity.ts'],
-  migrations: ['./src/migrations/{*.ts}'],
+  migrations: ['./src/migrations/*.ts'],
   seeds: ['src/seeds/**/*{.ts,.js}'],
   factories: ['src/factories/**/*{.ts,.js}'],
   cli: {
