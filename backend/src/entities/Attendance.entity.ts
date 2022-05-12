@@ -27,13 +27,13 @@ export class Attendance {
   status: AttendanceStatus;
 
   @CreateDateColumn({ type: 'datetime' })
-  createdAt: string;
+  createdAt: DateTime;
 
   @UpdateDateColumn({ type: 'datetime' })
-  updatedAt: string;
+  updatedAt: DateTime;
 
   @DeleteDateColumn({ type: 'datetime', nullable: true })
-  deletedAt: string;
+  deletedAt: DateTime;
 
   @ManyToOne(() => User, (user) => user.attendances)
   user: User;

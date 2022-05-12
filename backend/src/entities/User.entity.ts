@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -24,13 +25,13 @@ export class User {
   lastName: string;
 
   @CreateDateColumn({ type: 'datetime' })
-  createdAt: string;
+  createdAt: DateTime;
 
   @UpdateDateColumn({ type: 'datetime' })
-  updatedAt: string;
+  updatedAt: DateTime;
 
   @DeleteDateColumn({ type: 'datetime', nullable: true })
-  deletedAt: string;
+  deletedAt: DateTime;
 
   @OneToMany(() => Attendance, (attendance) => attendance.user)
   attendances: Attendance[];
