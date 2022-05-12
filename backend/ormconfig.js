@@ -7,6 +7,8 @@ module.exports = {
   database: 'kintai',
   entities: ['./src/entities/*.entity.ts'],
   migrations: ['./src/migrations/{*.ts}'],
+  seeds: ['src/seeds/**/*{.ts,.js}'],
+  factories: ['src/factories/**/*{.ts,.js}'],
   cli: {
     migrationsDir: './src/migrations',
   },
