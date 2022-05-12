@@ -25,13 +25,13 @@ export class User {
   @Column({ type: 'varchar', length: 200 })
   lastName: string;
 
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: 'datetime', name: 'created_at' })
   createdAt: DateTime;
 
-  @UpdateDateColumn({ type: 'datetime' })
+  @UpdateDateColumn({ type: 'datetime', name: 'updated_at' })
   updatedAt: DateTime;
 
-  @DeleteDateColumn({ type: 'datetime', nullable: true })
+  @DeleteDateColumn({ type: 'datetime', name: 'deleted_at', nullable: true })
   deletedAt: DateTime;
 
   @OneToMany(() => Attendance, (attendance) => attendance.user)
