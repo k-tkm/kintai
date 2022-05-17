@@ -9,6 +9,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Attendance } from './Attendance.entity';
+import { UserDepartment } from './UserDepartment.entity';
 import { Vacation } from './Vacation.entity';
 
 @Entity('users')
@@ -39,4 +40,7 @@ export class User {
 
   @OneToMany(() => Vacation, (vacations) => vacations.user)
   vacations: Vacation[];
+
+  @OneToMany(() => UserDepartment, (userDepartment) => userDepartment.user)
+  userDepartments: UserDepartment[];
 }

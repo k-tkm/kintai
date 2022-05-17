@@ -27,4 +27,10 @@ export class Department {
 
   @DeleteDateColumn({ type: 'datetime', name: 'deleted_at', nullable: true })
   deletedAt: DateTime;
+
+  @OneToMany(
+    () => UserDepartment,
+    (userDepartment) => userDepartment.department,
+  )
+  userDepartments: UserDepartment[];
 }
