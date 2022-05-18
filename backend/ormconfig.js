@@ -5,10 +5,10 @@ module.exports = {
   username: 'develop',
   password: 'password',
   database: 'kintai',
-  entities: ['./src/entities/*.entity.ts'],
+  entities: ['dist/entities/*.entity.js'],
   migrations: ['./src/migrations/*.ts'],
-  seeds: ['src/seeds/**/*{.ts,.js}'],
-  factories: ['src/factories/**/*{.ts,.js}'],
+  seeds: ['dist/seeds/*.js'],
+  factories: ['dist/factories/*.js'],
   cli: {
     migrationsDir: './src/migrations',
   },
