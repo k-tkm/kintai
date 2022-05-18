@@ -23,7 +23,7 @@ export class Vacation {
   id: number;
 
   @Column({ type: 'datetime' })
-  date: DateTime;
+  date: Date;
 
   @Column({ type: 'varchar', length: 200 })
   description: string;
@@ -32,13 +32,13 @@ export class Vacation {
   type: VacationType;
 
   @CreateDateColumn({ type: 'datetime', name: 'created_at' })
-  createdAt: DateTime;
+  createdAt: Date;
 
   @UpdateDateColumn({ type: 'datetime', name: 'updated_at' })
-  updatedAt: DateTime;
+  updatedAt: Date;
 
   @DeleteDateColumn({ type: 'datetime', name: 'deleted_at', nullable: true })
-  deletedAt: DateTime;
+  deletedAt: Date;
 
   @ManyToOne(() => User, (user) => user.vacations)
   user: User;
