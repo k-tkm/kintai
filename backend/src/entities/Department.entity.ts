@@ -20,13 +20,13 @@ export class Department {
   name: string;
 
   @CreateDateColumn({ type: 'datetime', name: 'created_at' })
-  createdAt: DateTime;
+  createdAt: Date;
 
   @UpdateDateColumn({ type: 'datetime', name: 'updated_at' })
-  updatedAt: DateTime;
+  updatedAt: Date;
 
   @DeleteDateColumn({ type: 'datetime', name: 'deleted_at', nullable: true })
-  deletedAt: DateTime;
+  deletedAt: Date;
 
   @OneToMany(
     () => UserDepartment,
