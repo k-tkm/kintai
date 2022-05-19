@@ -17,12 +17,6 @@ export class UserDepartment {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'int', name: 'user_id' })
-  userID: number;
-
-  @Column({ type: 'int', name: 'department_id' })
-  departmentID: number;
-
   @CreateDateColumn({ type: 'datetime', name: 'created_at' })
   createdAt: DateTime;
 
