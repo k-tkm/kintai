@@ -34,6 +34,8 @@ export default class createAll implements Seeder {
           date: date,
           status: status,
           user: users[0],
+          createdAt: date,
+          updatedAt: date,
         });
       }
 
