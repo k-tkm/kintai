@@ -18,6 +18,7 @@ define(Vacation, () => {
   vacation.date = faker.date.future();
   vacation.description = faker.lorem.lines();
   vacation.type = randomValue;
+  vacation.createdAt = now;
   vacation.updatedAt = now;
   return vacation;
 });
