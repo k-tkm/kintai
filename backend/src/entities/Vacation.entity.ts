@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { User } from './User.entity';
 
-enum VacationType {
+export enum VacationType {
   PAID = 'begin',
   SICK = 'end',
   CHILDCARE = 'childcare',

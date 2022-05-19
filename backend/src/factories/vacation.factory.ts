@@ -1,14 +1,23 @@
 import { define } from 'typeorm-seeding';
 import { faker } from '@faker-js/faker';
-import { Vacation } from 'src/entities/Vacation.entity';
+import { Vacation, VacationType } from 'src/entities/Vacation.entity';
 
 const now = new Date();
+
+const typeArray = [
+  VacationType.PAID,
+  VacationType.CHILDCARE,
+  VacationType.MATERNITY,
+  VacationType.SICK,
+];
+
+const randomValue = typeArray[Math.floor(Math.random() * typeArray.length)];
 
 define(Vacation, () => {
   const vacation = new Vacation();
   vacation.date = faker.date.future();
   vacation.description = faker.lorem.lines();
-  vacation.createdAt = now;
+  vacation.type = randomValue;
   vacation.updatedAt = now;
   return vacation;
 });
