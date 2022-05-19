@@ -25,7 +25,7 @@ export class Vacation {
   @Column({ type: 'datetime' })
   date: Date;
 
-  @Column({ type: 'varchar', length: 200 })
+  @Column({ type: 'varchar', length: 1000 })
   description: string;
 
   @Column({ type: 'enum', enum: VacationType })
@@ -40,6 +40,9 @@ export class Vacation {
   @DeleteDateColumn({ type: 'datetime', name: 'deleted_at', nullable: true })
   deletedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.vacations)
+  @ManyToOne(() => User, (user) => user.vacations, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   user: User;
 }

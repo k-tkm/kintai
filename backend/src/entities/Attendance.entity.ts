@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { User } from './User.entity';
 
-enum AttendanceStatus {
+export enum AttendanceStatus {
   BEGIN = 'begin',
   END = 'end',
 }
@@ -35,6 +35,9 @@ export class Attendance {
   @DeleteDateColumn({ type: 'datetime', name: 'deleted_at', nullable: true })
   deletedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.attendances)
+  @ManyToOne(() => User, (user) => user.attendances, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   user: User;
 }
