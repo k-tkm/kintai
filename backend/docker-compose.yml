@@ -11,6 +11,7 @@ services:
       - type: bind
         source: .
         target: /backend
+    env_file: .env
   db:
     image: mysql:8.0
     container_name: mysql
