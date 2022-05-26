@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { User } from 'src/entities/User.entity';
 import { AuthService } from '../auth/auth.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UsersService } from './users.service';
 
 export type userDataType = {
@@ -14,6 +15,7 @@ export class UsersController {
     private usersService: UsersService,
     private authService: AuthService,
   ) {}
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getUsers(): Promise<User[]> {
     return await this.usersService.getUsers();
