@@ -9,6 +9,8 @@ import { UserModule } from './modules/users/users.module';
 
 @Module({
   imports: [
+    AuthModule,
+    UserModule,
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
