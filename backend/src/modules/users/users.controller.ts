@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { User } from 'src/entities/User.entity';
+import { AuthService } from '../auth/auth.service';
 import { UsersService } from './users.service';
 
 export type userDataType = {
@@ -12,7 +12,7 @@ export type userDataType = {
 export class UsersController {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService,
+    private authService: AuthService,
   ) {}
   @Get()
   async getUsers(): Promise<User[]> {
@@ -20,6 +20,11 @@ export class UsersController {
   }
   @Post()
   async saveUser(@Body() userData: userDataType): Promise<{ token: string }> {
-    return await this.usersService.saveUser(userData);
+    const savedUser = await this.usersService.saveUser(userData);
+    const payload = {
+      username: userData.lastName + userData.firstName,
+      sub: savedUser.id,
+    };
+    return await this.authService.login(payload);
   }
 }
