@@ -11,6 +11,8 @@ import {
 import { User } from 'src/entities/User.entity';
 import { AuthService } from '../auth/auth.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { FindOneParams } from './Dto/FindeOneParams';
+import { SaveUserDto } from './Dto/SaveUserDto';
 import { UsersService } from './users.service';
 
 export type userDataType = {
@@ -32,12 +34,12 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Get('/:id')
-  async getUserDetail(@Param('id') userID: number): Promise<User> {
-    return await this.usersService.getUserDetail(userID);
+  async getUserDetail(@Param() params: FindOneParams): Promise<User> {
+    return await this.usersService.getUserDetail(params.id);
   }
 
   @Post()
-  async saveUser(@Body() userData: userDataType): Promise<{ token: string }> {
+  async saveUser(@Body() userData: SaveUserDto): Promise<{ token: string }> {
     const savedUser = await this.usersService.saveUser(userData);
     const payload = {
       userID: savedUser.id,
@@ -46,7 +48,7 @@ export class UsersController {
   }
 
   @Delete('/:id')
-  async deleteUser(@Param('id') userID: number) {
-    this.usersService.deleteUser(userID);
+  async deleteUser(@Param() params: FindOneParams) {
+    this.usersService.deleteUser(params.id);
   }
 }
