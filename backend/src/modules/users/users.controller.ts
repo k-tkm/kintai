@@ -39,8 +39,7 @@ export class UsersController {
   async saveUser(@Body() userData: userDataType): Promise<{ token: string }> {
     const savedUser = await this.usersService.saveUser(userData);
     const payload = {
-      username: userData.lastName + userData.firstName,
-      sub: savedUser.id,
+      userID: savedUser.id,
     };
     return await this.authService.login(payload);
   }
