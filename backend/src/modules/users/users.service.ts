@@ -14,11 +14,15 @@ export class UsersService {
   ) {}
 
   getUsers(): Promise<User[]> {
-    return this.usersRepository.find();
+    return this.usersRepository.find({
+      relations: ['userDepartments', 'userDepartments.department'],
+    });
   }
 
   getUserDetail(userID: number): Promise<User> {
-    return this.usersRepository.findOne(userID);
+    return this.usersRepository.findOne(userID, {
+      relations: ['userDepartments', 'userDepartments.department'],
+    });
   }
 
   async saveUser(userData: userDataType): Promise<User> {
