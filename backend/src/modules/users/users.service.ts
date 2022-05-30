@@ -17,6 +17,10 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
+  getUserDetail(userID: number): Promise<User> {
+    return this.usersRepository.findOne(userID);
+  }
+
   async saveUser(userData: userDataType): Promise<User> {
     const { lastName, firstName, email } = userData;
     const existUser = await this.usersRepository.findOne({

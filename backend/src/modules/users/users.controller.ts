@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { User } from 'src/entities/User.entity';
 import { AuthService } from '../auth/auth.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -20,6 +28,13 @@ export class UsersController {
   async getUsers(): Promise<User[]> {
     return await this.usersService.getUsers();
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/:id')
+  async getUserDetail(@Param('id') userID: number): Promise<User> {
+    return await this.usersService.getUserDetail(userID);
+  }
+
   @Post()
   async saveUser(@Body() userData: userDataType): Promise<{ token: string }> {
     const savedUser = await this.usersService.saveUser(userData);
