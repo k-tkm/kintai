@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -42,5 +43,10 @@ export class UsersController {
       userID: savedUser.id,
     };
     return await this.authService.login(payload);
+  }
+
+  @Delete('/:id')
+  async deleteUser(@Param('id') userID: number) {
+    this.usersService.deleteUser(userID);
   }
 }

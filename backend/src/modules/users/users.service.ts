@@ -39,4 +39,8 @@ export class UsersService {
 
     return savedUser;
   }
+
+  async deleteUser(userID: number) {
+    this.usersRepository.softDelete(userID);
+  }
 }
