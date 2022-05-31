@@ -5,7 +5,6 @@ import {
   Get,
   Param,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { User } from 'src/entities/User.entity';
