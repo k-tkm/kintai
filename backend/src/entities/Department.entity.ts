@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -8,7 +7,6 @@ import {
   DeleteDateColumn,
   OneToMany,
 } from 'typeorm';
-import { User } from './User.entity';
 import { UserDepartment } from './UserDepartment.entity';
 
 @Entity('departments')
