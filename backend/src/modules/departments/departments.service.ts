@@ -11,6 +11,14 @@ export class DepartmentsService {
   ) {}
 
   getDepartments(): Promise<Department[]> {
-    return this.departmentsRepository.find();
+    return this.departmentsRepository.find({
+      relations: ['userDepartments', 'userDepartments.user'],
+    });
+  }
+
+  getDepartmentDetail(departmentID: number): Promise<Department> {
+    return this.departmentsRepository.findOne(departmentID, {
+      relations: ['userDepartments', 'userDepartments.user'],
+    });
   }
 }
