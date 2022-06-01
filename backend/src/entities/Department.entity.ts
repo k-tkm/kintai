@@ -14,7 +14,7 @@ export class Department {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 200, unique: true })
+  @Column({ type: 'varchar', length: 200, unique: true, default: '' })
   name: string;
 
   @CreateDateColumn({ type: 'datetime', name: 'created_at' })
