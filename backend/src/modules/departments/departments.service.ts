@@ -2,8 +2,8 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Department } from 'src/entities/Department.entity';
 import { UserDepartment } from 'src/entities/UserDepartment.entity';
-import { Repository } from 'typeorm';
-import type { CreateDepartmentDto } from './Dto/CreateDepartmentDto';
+import { Not, Repository } from 'typeorm';
+import { UpdateDepartmentDto } from './Dto/UpdateDepartmentDto';
 
 @Injectable()
 export class DepartmentsService {
@@ -27,14 +27,19 @@ export class DepartmentsService {
     });
   }
 
-  async createDepartment(
-    departmentData: CreateDepartmentDto,
+  async updateDepartment(
+    departmentData: UpdateDepartmentDto,
+    departmentID?: number,
   ): Promise<Department> {
-    const isExist = !!(await this.departmentsRepository.findOne({
-      name: departmentData.name,
+    const isExistDuplicateName = !!(await this.departmentsRepository.findOne({
+      where: departmentID
+        ? { id: Not(departmentID), name: departmentData.name }
+        : {
+            name: departmentData.name,
+          },
     }));
 
-    if (isExist) {
+    if (isExistDuplicateName) {
       throw new HttpException(
         {
           statusCode: 409,
@@ -44,12 +49,19 @@ export class DepartmentsService {
       );
     }
 
-    const department = await this.departmentsRepository.save({
-      name: departmentData.name,
-    });
+    const existDepartment = await this.departmentsRepository.findOne(
+      departmentID,
+    );
+    const department: Department = departmentID
+      ? await this.departmentsRepository.save({
+          ...existDepartment,
+          name: departmentData.name,
+          updatedAt: new Date(),
+        })
+      : await this.departmentsRepository.save({ name: departmentData.name });
 
     const userDepartments: UserDepartment[] = [];
-    if (departmentData.users) {
+    if (departmentData.users.length) {
       for (const user of departmentData.users) {
         userDepartments.push(
           await this.userDepartmentsRepository.save({
