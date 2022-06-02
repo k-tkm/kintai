@@ -35,7 +35,7 @@ export class DepartmentsController {
   createDepartment(
     @Body() departmentData: CreateDepartmentDto,
   ): Promise<Department> {
-    return this.departmentsService.updateDepartment(departmentData);
+    return this.departmentsService.createDepartment(departmentData);
   }
 
   @UseGuards(JwtAuthGuard)
