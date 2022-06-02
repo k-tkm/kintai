@@ -74,4 +74,8 @@ export class DepartmentsService {
 
     return { ...department, userDepartments: userDepartments };
   }
+
+  deleteDepartment(departmentID: number) {
+    this.departmentsRepository.softDelete(departmentID);
+  }
 }

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -44,5 +45,11 @@ export class DepartmentsController {
     @Body() departmentData: UpdateDepartmentDto,
   ): Promise<Department> {
     return this.departmentsService.updateDepartment(departmentData, params.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  deleteDepartment(@Param() params: FindOneParams) {
+    this.departmentsService.deleteDepartment(params.id);
   }
 }
