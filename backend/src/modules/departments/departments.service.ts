@@ -86,19 +86,48 @@ export class DepartmentsService {
     });
 
     const userDepartments: UserDepartment[] = [];
-    if (departmentData.users.length) {
-      for (const user of departmentData.users) {
-        const existUsersDepartment =
-          await this.userDepartmentsRepository.findOne({
-            where: { user: user.id, department: department.id },
-          });
+    if (departmentData.users) {
+      const existUsersDepartments = await this.userDepartmentsRepository.find({
+        where: { department: department.id },
+      });
+      const existUsersDepartmentIds = existUsersDepartments.map((d) => d.id);
+      //所属するユーザーが全て削除された時の処理
+      if (departmentData.users.length === 0) {
+        this.userDepartmentsRepository.softDelete(existUsersDepartmentIds);
+      }
 
-        userDepartments.push(
-          await this.userDepartmentsRepository.save({
-            ...existUsersDepartment,
-            updatedAt: new Date(),
-          }),
-        );
+      if (departmentData.users.length !== 0) {
+        const newUsersIDs = departmentData.users.map((u) => u.id);
+        const deletedUserDepartmentsIDs = existUsersDepartments
+          .filter((d) => !newUsersIDs.includes(d.user.id))
+          .map((d) => d.id);
+        // 更新時に所属部署から外されたユーザーがいた時の処理
+        if (deletedUserDepartmentsIDs.length) {
+          this.userDepartmentsRepository.softDelete(deletedUserDepartmentsIDs);
+        }
+
+        for (const user of departmentData.users) {
+          const existUsersDepartment =
+            await this.userDepartmentsRepository.findOne({
+              where: { user: user.id, department: department.id },
+            });
+
+          if (existUsersDepartment) {
+            userDepartments.push(
+              await this.userDepartmentsRepository.save({
+                ...existUsersDepartment,
+                updatedAt: new Date(),
+              }),
+            );
+          } else {
+            userDepartments.push(
+              await this.userDepartmentsRepository.save({
+                department: department,
+                user: user,
+              }),
+            );
+          }
+        }
       }
     }
     return { ...department, userDepartments: userDepartments };
