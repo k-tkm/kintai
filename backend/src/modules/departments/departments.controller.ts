@@ -35,7 +35,7 @@ export class DepartmentsController {
   createDepartment(
     @Body() departmentData: CreateDepartmentDto,
   ): Promise<Department> {
-    return this.departmentsService.createDepartment(departmentData);
+    return this.departmentsService.create(departmentData);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -44,12 +44,12 @@ export class DepartmentsController {
     @Param() params: FindOneParams,
     @Body() departmentData: UpdateDepartmentDto,
   ): Promise<Department> {
-    return this.departmentsService.updateDepartment(departmentData, params.id);
+    return this.departmentsService.update(departmentData, params.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   deleteDepartment(@Param() params: FindOneParams) {
-    this.departmentsService.deleteDepartment(params.id);
+    this.departmentsService.delete(params.id);
   }
 }

@@ -40,9 +40,7 @@ export class DepartmentsService {
     });
   }
 
-  async createDepartment(
-    departmentData: CreateDepartmentDto,
-  ): Promise<Department> {
+  async create(departmentData: CreateDepartmentDto): Promise<Department> {
     const isExistDuplicateName = !!(await this.departmentsRepository.findOne({
       where: { name: departmentData.name },
     }));
@@ -67,7 +65,7 @@ export class DepartmentsService {
     return { ...department, userDepartments: userDepartments };
   }
 
-  async updateDepartment(
+  async update(
     departmentData: UpdateDepartmentDto,
     departmentID: number,
   ): Promise<Department> {
@@ -133,7 +131,7 @@ export class DepartmentsService {
     return { ...department, userDepartments: userDepartments };
   }
 
-  deleteDepartment(departmentID: number) {
+  delete(departmentID: number) {
     this.departmentsRepository.softDelete(departmentID);
   }
 }
