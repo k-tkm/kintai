@@ -1,6 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Department } from 'src/entities/Department.entity';
+import { User } from 'src/entities/User.entity';
 import { UserDepartment } from 'src/entities/UserDepartment.entity';
 import { Not, Repository } from 'typeorm';
 import { CreateDepartmentDto } from './Dto/CreateDepartmentDto';
@@ -25,6 +26,50 @@ export class DepartmentsService {
         },
         409,
       );
+    }
+  }
+
+  private async removeBelonging({
+    users,
+    existUsersDepartments,
+  }: {
+    users: User[];
+    existUsersDepartments: UserDepartment[];
+  }) {
+    const newUsersIDs = users.map((u) => u.id);
+    const deletedUserDepartmentsIDs = existUsersDepartments
+      .filter((d) => !newUsersIDs.includes(d?.user.id))
+      .map((d) => d.id);
+    if (deletedUserDepartmentsIDs.length) {
+      this.userDepartmentsRepository.softDelete(deletedUserDepartmentsIDs);
+    }
+  }
+
+  private async updateBelonging({
+    user,
+    department,
+  }: {
+    user: User;
+    department: Department;
+  }): Promise<UserDepartment> {
+    const existUsersDepartment = await this.userDepartmentsRepository.findOne({
+      where: { user: user.id, department: department.id },
+      withDeleted: true,
+    });
+
+    if (existUsersDepartment) {
+      return await this.userDepartmentsRepository.save({
+        ...existUsersDepartment,
+        department: department,
+        user: user,
+        updatedAt: new Date(),
+        deletedAt: null,
+      });
+    } else {
+      return await this.userDepartmentsRepository.save({
+        department: department,
+        user: user,
+      });
     }
   }
 
@@ -89,48 +134,22 @@ export class DepartmentsService {
         where: { department: department.id },
         relations: ['user'],
       });
-      const existUsersDepartmentIds = existUsersDepartments.map((d) => d.id);
-
-      //所属するユーザーが全て削除された時の処理
       if (departmentData.users.length === 0) {
+        const existUsersDepartmentIds = existUsersDepartments.map((d) => d.id);
         this.userDepartmentsRepository.softDelete(existUsersDepartmentIds);
       } else {
-        // 更新時に所属部署から外されたユーザーがいた時の処理
-        const newUsersIDs = departmentData.users.map((u) => u.id);
-        const deletedUserDepartmentsIDs = existUsersDepartments
-          .filter((d) => !newUsersIDs.includes(d.user.id))
-          .map((d) => d.id);
-        if (deletedUserDepartmentsIDs.length) {
-          this.userDepartmentsRepository.softDelete(deletedUserDepartmentsIDs);
-        }
-
+        await this.removeBelonging({
+          users: departmentData.users,
+          existUsersDepartments: existUsersDepartments,
+        });
         for (const user of departmentData.users) {
-          const existUsersDepartment =
-            await this.userDepartmentsRepository.findOne({
-              where: { user: user.id, department: department.id },
-              withDeleted: true,
-            });
-
-          if (existUsersDepartment) {
-            userDepartments.push(
-              await this.userDepartmentsRepository.save({
-                ...existUsersDepartment,
-                updatedAt: new Date(),
-                deletedAt: null,
-              }),
-            );
-          } else {
-            userDepartments.push(
-              await this.userDepartmentsRepository.save({
-                department: department,
-                user: user,
-              }),
-            );
-          }
+          userDepartments.push(
+            await this.updateBelonging({ user, department }),
+          );
         }
       }
     }
-    return { ...department, userDepartments };
+    return { ...department, userDepartments: userDepartments };
   }
 
   delete(departmentID: number) {
