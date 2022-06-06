@@ -25,4 +25,10 @@ export class VacationsService {
 
     return vacations;
   }
+
+  async getVacationDetail(vacationID: number): Promise<Vacation> {
+    return this.vacationsRepository.findOne(vacationID, {
+      relations: ['user'],
+    });
+  }
 }

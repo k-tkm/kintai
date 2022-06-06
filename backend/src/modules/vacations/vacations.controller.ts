@@ -1,6 +1,7 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { Vacation } from 'src/entities/Vacation.entity';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { FindOneParams } from './Dto/FindeOneParams';
 import { getVacationsQueryDto } from './Dto/getVacationsQuery.Dto';
 import { VacationsService } from './vacations.service';
 
@@ -12,5 +13,11 @@ export class VacationsController {
   @Get()
   getVacations(@Query() query: getVacationsQueryDto): Promise<Vacation[]> {
     return this.vacationsService.getVacations(query);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  getVacationDetail(@Param() params: FindOneParams): Promise<Vacation> {
+    return this.vacationsService.getVacationDetail(params.id);
   }
 }
