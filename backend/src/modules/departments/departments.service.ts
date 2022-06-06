@@ -87,19 +87,19 @@ export class DepartmentsService {
     if (departmentData.users) {
       const existUsersDepartments = await this.userDepartmentsRepository.find({
         where: { department: department.id },
+        relations: ['user'],
       });
       const existUsersDepartmentIds = existUsersDepartments.map((d) => d.id);
+
       //所属するユーザーが全て削除された時の処理
       if (departmentData.users.length === 0) {
         this.userDepartmentsRepository.softDelete(existUsersDepartmentIds);
-      }
-
-      if (departmentData.users.length !== 0) {
+      } else {
+        // 更新時に所属部署から外されたユーザーがいた時の処理
         const newUsersIDs = departmentData.users.map((u) => u.id);
         const deletedUserDepartmentsIDs = existUsersDepartments
           .filter((d) => !newUsersIDs.includes(d.user.id))
           .map((d) => d.id);
-        // 更新時に所属部署から外されたユーザーがいた時の処理
         if (deletedUserDepartmentsIDs.length) {
           this.userDepartmentsRepository.softDelete(deletedUserDepartmentsIDs);
         }
@@ -108,6 +108,7 @@ export class DepartmentsService {
           const existUsersDepartment =
             await this.userDepartmentsRepository.findOne({
               where: { user: user.id, department: department.id },
+              withDeleted: true,
             });
 
           if (existUsersDepartment) {
@@ -115,6 +116,7 @@ export class DepartmentsService {
               await this.userDepartmentsRepository.save({
                 ...existUsersDepartment,
                 updatedAt: new Date(),
+                deletedAt: null,
               }),
             );
           } else {
@@ -128,7 +130,7 @@ export class DepartmentsService {
         }
       }
     }
-    return { ...department, userDepartments: userDepartments };
+    return { ...department, userDepartments };
   }
 
   delete(departmentID: number) {
