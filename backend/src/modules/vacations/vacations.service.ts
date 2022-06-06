@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Vacation } from 'src/entities/Vacation.entity';
 import { Repository } from 'typeorm';
+import { CreateVacationDto } from './Dto/CreateVacation.Dto';
 import { getVacationsQueryDto } from './Dto/getVacationsQuery.Dto';
 
 @Injectable()
@@ -30,5 +31,11 @@ export class VacationsService {
     return this.vacationsRepository.findOne(vacationID, {
       relations: ['user'],
     });
+  }
+
+  async create(body: CreateVacationDto): Promise<Vacation> {
+    const { date, type, description } = body;
+
+    return this.vacationsRepository.save({ date, type, description });
   }
 }
