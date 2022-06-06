@@ -36,7 +36,7 @@ export class UsersService {
         firstName: firstName,
       });
     } else {
-      savedUser = this.usersRepository.create(userData);
+      savedUser = await this.usersRepository.save(userData);
     }
 
     return savedUser;
