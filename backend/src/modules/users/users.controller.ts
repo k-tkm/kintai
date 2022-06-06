@@ -38,8 +38,8 @@ export class UsersController {
   }
 
   @Post()
-  async saveUser(@Body() userData: SaveUserDto): Promise<{ token: string }> {
-    const savedUser = await this.usersService.saveUser(userData);
+  async save(@Body() userData: SaveUserDto): Promise<{ token: string }> {
+    const savedUser = await this.usersService.save(userData);
     const payload = {
       userID: savedUser.id,
     };
@@ -47,7 +47,7 @@ export class UsersController {
   }
 
   @Delete('/:id')
-  async deleteUser(@Param() params: FindOneParams) {
-    this.usersService.deleteUser(params.id);
+  async delete(@Param() params: FindOneParams) {
+    this.usersService.delete(params.id);
   }
 }

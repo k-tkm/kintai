@@ -23,7 +23,7 @@ export class UsersService {
     });
   }
 
-  async saveUser(userData: userDataType): Promise<User> {
+  async save(userData: userDataType): Promise<User> {
     const { lastName, firstName, email } = userData;
     const existUser = await this.usersRepository.findOne({
       email: email,
@@ -42,7 +42,7 @@ export class UsersService {
     return savedUser;
   }
 
-  async deleteUser(userID: number) {
+  async delete(userID: number) {
     this.usersRepository.softDelete(userID);
   }
 }
