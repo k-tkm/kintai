@@ -7,12 +7,14 @@ import { AuthModule } from './modules/auth/auth.module';
 import { DepartmentsModule } from './modules/departments/departments.module';
 import { UsersController } from './modules/users/users.controller';
 import { UserModule } from './modules/users/users.module';
+import { VacationsModule } from './modules/vacations/vacations.module';
 
 @Module({
   imports: [
     AuthModule,
     UserModule,
     DepartmentsModule,
+    VacationsModule,
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
