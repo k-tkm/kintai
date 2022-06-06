@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Vacation } from 'src/entities/Vacation.entity';
 import { Repository } from 'typeorm';
@@ -33,9 +33,31 @@ export class VacationsService {
     });
   }
 
-  async create(body: CreateVacationDto): Promise<Vacation> {
+  create(body: CreateVacationDto): Promise<Vacation> {
     const { date, type, description } = body;
 
     return this.vacationsRepository.save({ date, type, description });
+  }
+
+  async update(
+    vacationID: number,
+    userID: number,
+    newDate: CreateVacationDto,
+  ): Promise<Vacation> {
+    const existVacation = await this.vacationsRepository.findOne(vacationID);
+    if (existVacation.user.id !== userID) {
+      throw new HttpException(
+        {
+          statusCode: 403,
+          error: 'この休暇情報を編集する権限がありません。',
+        },
+        403,
+      );
+    }
+    return await this.vacationsRepository.save({
+      ...existVacation,
+      ...newDate,
+      updatedAt: new Date(),
+    });
   }
 }

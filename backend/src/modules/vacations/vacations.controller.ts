@@ -4,7 +4,9 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { Vacation } from 'src/entities/Vacation.entity';
@@ -34,5 +36,15 @@ export class VacationsController {
   @Post()
   create(@Body() body: CreateVacationDto): Promise<Vacation> {
     return this.vacationsService.create(body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put(':id')
+  update(
+    @Req() req,
+    @Param() params: FindOneParams,
+    @Body() body: CreateVacationDto,
+  ): Promise<Vacation> {
+    return this.vacationsService.update(params.id, req.user.id, body);
   }
 }
