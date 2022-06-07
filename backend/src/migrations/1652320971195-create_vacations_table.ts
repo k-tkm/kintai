@@ -5,10 +5,10 @@ export class createVacationsTable1652320971195 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE vacations (id int NOT NULL AUTO_INCREMENT, date datetime NOT NULL, description varchar(200) NOT NULL, type enum ('begin', 'end', 'childcare', 'maternity') NOT NULL, created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), deleted_at datetime(6) NULL, userId int NULL, PRIMARY KEY (id)) ENGINE=InnoDB`,
+      `CREATE TABLE vacations (id int NOT NULL AUTO_INCREMENT, date datetime NOT NULL, description varchar(200) NOT NULL, type enum ('paid', 'sick', 'childcare', 'maternity') NOT NULL, created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), deleted_at datetime(6) NULL, user_id int NULL, PRIMARY KEY (id)) ENGINE=InnoDB`,
     );
     await queryRunner.query(
-      `ALTER TABLE vacations ADD CONSTRAINT FK_89640b2dfe9d14d229c6943626f FOREIGN KEY (userId) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE vacations ADD CONSTRAINT FK_89640b2dfe9d14d229c6943626f FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
   }
 
