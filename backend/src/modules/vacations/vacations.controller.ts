@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -46,5 +47,11 @@ export class VacationsController {
     @Body() body: CreateVacationDto,
   ): Promise<Vacation> {
     return this.vacationsService.update(params.id, req.user.id, body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  delete(@Param() params: FindOneParams) {
+    return this.vacationsService.delete(params.id);
   }
 }

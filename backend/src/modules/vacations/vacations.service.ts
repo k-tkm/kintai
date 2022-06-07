@@ -44,7 +44,9 @@ export class VacationsService {
     userID: number,
     newDate: CreateVacationDto,
   ): Promise<Vacation> {
-    const existVacation = await this.vacationsRepository.findOne(vacationID);
+    const existVacation = await this.vacationsRepository.findOne(vacationID, {
+      relations: ['user'],
+    });
     if (existVacation.user.id !== userID) {
       throw new HttpException(
         {
@@ -59,5 +61,22 @@ export class VacationsService {
       ...newDate,
       updatedAt: new Date(),
     });
+  }
+
+  async delete(vacationID: number, userID: number) {
+    const existVacation = await this.vacationsRepository.findOne(vacationID, {
+      relations: ['user'],
+    });
+    if (existVacation.user.id !== userID) {
+      throw new HttpException(
+        {
+          statusCode: 403,
+          error: 'この休暇情報を削除する権限がありません。',
+        },
+        403,
+      );
+    }
+
+    return await this.vacationsRepository.softDelete(existVacation);
   }
 }
