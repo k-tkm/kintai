@@ -11,8 +11,8 @@ import {
 import { User } from './User.entity';
 
 export enum VacationType {
-  PAID = 'begin',
-  SICK = 'end',
+  PAID = 'paid',
+  SICK = 'sick',
   CHILDCARE = 'childcare',
   MATERNITY = 'maternity',
 }
