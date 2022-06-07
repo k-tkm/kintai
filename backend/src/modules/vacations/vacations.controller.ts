@@ -39,8 +39,11 @@ export class VacationsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() body: CreateVacationDto): Promise<Vacation> {
-    return this.vacationsService.create(body);
+  create(
+    @Req() req: RequestWithUserID,
+    @Body() body: CreateVacationDto,
+  ): Promise<Vacation> {
+    return this.vacationsService.create(req.user.userID, body);
   }
 
   @UseGuards(JwtAuthGuard)

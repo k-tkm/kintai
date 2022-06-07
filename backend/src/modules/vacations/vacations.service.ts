@@ -1,5 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/entities/User.entity';
 import { Vacation } from 'src/entities/Vacation.entity';
 import { Repository } from 'typeorm';
 import { CreateVacationDto } from './Dto/CreateVacation.Dto';
@@ -10,6 +11,9 @@ export class VacationsService {
   constructor(
     @InjectRepository(Vacation)
     private vacationsRepository: Repository<Vacation>,
+
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
   ) {}
 
   async getVacations(query: getVacationsQueryDto): Promise<Vacation[]> {
@@ -33,10 +37,16 @@ export class VacationsService {
     });
   }
 
-  create(body: CreateVacationDto): Promise<Vacation> {
+  async create(userID: number, body: CreateVacationDto): Promise<Vacation> {
     const { date, type, description } = body;
+    const requestUser = await this.usersRepository.findOne(userID);
 
-    return this.vacationsRepository.save({ date, type, description });
+    return this.vacationsRepository.save({
+      date,
+      type,
+      description,
+      user: requestUser,
+    });
   }
 
   async update(
@@ -47,6 +57,7 @@ export class VacationsService {
     const existVacation = await this.vacationsRepository.findOne(vacationID, {
       relations: ['user'],
     });
+    console.log('call ^^^^^^^^^^^^^^^^^^^^^^^^^^', existVacation);
     if (existVacation.user.id !== userID) {
       throw new HttpException(
         {
