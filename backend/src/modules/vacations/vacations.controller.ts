@@ -17,6 +17,10 @@ import { FindOneParams } from './Dto/FindeOneParams';
 import { getVacationsQueryDto } from './Dto/getVacationsQuery.Dto';
 import { VacationsService } from './vacations.service';
 
+type RequestWithUserID = Request & {
+  user: { userID: number };
+};
+
 @Controller('vacations')
 export class VacationsController {
   constructor(private vacationsService: VacationsService) {}
@@ -42,16 +46,16 @@ export class VacationsController {
   @UseGuards(JwtAuthGuard)
   @Put(':id')
   update(
-    @Req() req,
+    @Req() req: RequestWithUserID,
     @Param() params: FindOneParams,
     @Body() body: CreateVacationDto,
   ): Promise<Vacation> {
-    return this.vacationsService.update(params.id, req.user.id, body);
+    return this.vacationsService.update(params.id, req.user.userID, body);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  delete(@Param() params: FindOneParams) {
-    return this.vacationsService.delete(params.id);
+  delete(@Req() req: RequestWithUserID, @Param() params: FindOneParams) {
+    return this.vacationsService.delete(req.user.userID, params.id);
   }
 }
