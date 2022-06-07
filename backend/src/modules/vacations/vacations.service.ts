@@ -16,7 +16,7 @@ export class VacationsService {
     const { startDate, endDate, user_id } = query;
     const vacations = await this.vacationsRepository
       .createQueryBuilder('vacations')
-      .leftJoinAndSelect('user', 'u')
+      .leftJoinAndSelect('vacations.user', 'u')
       .where('vacations.date between :startDate and :endDate', {
         startDate: startDate,
         endDate: endDate,
