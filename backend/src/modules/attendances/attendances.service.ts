@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Attendance } from 'src/entities/Attendance.entity';
 import { User } from 'src/entities/User.entity';
@@ -35,5 +35,32 @@ export class AttendancesService {
   ): Promise<Attendance> {
     const requestUser = await this.usersRepository.findOne(userID);
     return this.attendancesRepository.save({ ...newData, user: requestUser });
+  }
+
+  async update(
+    attendanceID: number,
+    userID: number,
+    newDate: CreateAttendanceDto,
+  ): Promise<Attendance> {
+    const existAttendance = await this.attendancesRepository.findOne(
+      attendanceID,
+      {
+        relations: ['user'],
+      },
+    );
+    if (existAttendance.user.id !== userID) {
+      throw new HttpException(
+        {
+          statusCode: 403,
+          error: 'この勤怠を編集する権限がありません。',
+        },
+        403,
+      );
+    }
+    return await this.attendancesRepository.save({
+      ...existAttendance,
+      ...newDate,
+      updatedAt: new Date(),
+    });
   }
 }
