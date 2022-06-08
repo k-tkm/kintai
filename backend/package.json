@@ -20,12 +20,12 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migration:generate": "ts-node node_modules/typeorm/cli.js migration:generate -n",
-    "migration:run": "ts-node node_modules/typeorm/cli.js migration:run",
-    "migration:revert": "ts-node node_modules/typeorm/cli.js migration:revert",
-    "seed:config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config",
-    "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed",
-    "schema:drop": "ts-node ./node_modules/typeorm/cli.js schema:drop",
-    "schema:sync": "ts-node ./node_modules/typeorm/cli.js schema:sync"
+    "migration:run": "docker exec -it backend sh -c 'npx ts-node node_modules/typeorm/cli.js migration:run'",
+    "migration:revert": "docker exec -it backend sh -c 'npx ts-node node_modules/typeorm/cli.js migration:revert'",
+    "seed:config": "docker exec -it backend sh -c 'npx ts-node ./node_modules/typeorm-seeding/dist/cli.js config'",
+    "seed:run": "docker exec -it backend sh -c 'npx ts-node ./node_modules/typeorm-seeding/dist/cli.js seed'",
+    "schema:drop": "docker exec -it backend sh -c 'npx ts-node ./node_modules/typeorm/cli.js schema:drop'",
+    "schema:sync": "docker exec -it backend sh -c 'npx ts-node ./node_modules/typeorm/cli.js schema:sync'"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",

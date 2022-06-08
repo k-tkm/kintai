@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  frontend:
+    container_name: frontend
+    build: .
+    tty: true
+    restart: always
+    ports:
+      - '3000:3000'
+    volumes:
+      - type: bind
+        source: .
+        target: /frontend

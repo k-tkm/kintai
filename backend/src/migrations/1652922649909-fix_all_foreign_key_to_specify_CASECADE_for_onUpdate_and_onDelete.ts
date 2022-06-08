@@ -17,10 +17,10 @@ export class fixAllForeignKeyToSpecifyCASECADEForOnUpdateAndOnDelete165292264990
       `ALTER TABLE vacations ADD description varchar(1000) NOT NULL`,
     );
     await queryRunner.query(
-      `ALTER TABLE attendances ADD CONSTRAINT FK_5e20bdbc6b72f0da23eb2ff1b60 FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE`,
+      `ALTER TABLE attendances ADD CONSTRAINT FK_5e20bdbc6b72f0da23eb2ff1b60 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE`,
     );
     await queryRunner.query(
-      `ALTER TABLE vacations ADD CONSTRAINT FK_89640b2dfe9d14d229c6943626f FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE`,
+      `ALTER TABLE vacations ADD CONSTRAINT FK_89640b2dfe9d14d229c6943626f FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE`,
     );
   }
 
@@ -36,10 +36,10 @@ export class fixAllForeignKeyToSpecifyCASECADEForOnUpdateAndOnDelete165292264990
       `ALTER TABLE vacations ADD description varchar(200) NOT NULL`,
     );
     await queryRunner.query(
-      `ALTER TABLE vacations ADD CONSTRAINT FK_89640b2dfe9d14d229c6943626f FOREIGN KEY (userId) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE vacations ADD CONSTRAINT FK_89640b2dfe9d14d229c6943626f FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE attendances ADD CONSTRAINT FK_5e20bdbc6b72f0da23eb2ff1b60 FOREIGN KEY (userId) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE attendances ADD CONSTRAINT FK_5e20bdbc6b72f0da23eb2ff1b60 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
   }
 }

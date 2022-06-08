@@ -7,12 +7,13 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { User } from './User.entity';
 
 export enum VacationType {
-  PAID = 'begin',
-  SICK = 'end',
+  PAID = 'paid',
+  SICK = 'sick',
   CHILDCARE = 'childcare',
   MATERNITY = 'maternity',
 }
@@ -44,5 +45,6 @@ export class Vacation {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 }
