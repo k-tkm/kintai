@@ -11,15 +11,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Vacation } from 'src/entities/Vacation.entity';
+import { RequestWithUserID } from 'src/utils/type';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateVacationDto } from './Dto/CreateVacation.Dto';
 import { FindOneParams } from './Dto/FindeOneParams';
 import { getVacationsQueryDto } from './Dto/getVacationsQuery.Dto';
 import { VacationsService } from './vacations.service';
-
-type RequestWithUserID = Request & {
-  user: { userID: number };
-};
 
 @Controller('vacations')
 export class VacationsController {
