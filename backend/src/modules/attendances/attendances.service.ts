@@ -63,4 +63,24 @@ export class AttendancesService {
       updatedAt: new Date(),
     });
   }
+
+  async delete(userID: number, attendanceID: number) {
+    const existAttendance = await this.attendancesRepository.findOne(
+      attendanceID,
+      {
+        relations: ['user'],
+      },
+    );
+    if (existAttendance.user.id !== userID) {
+      throw new HttpException(
+        {
+          statusCode: 403,
+          error: 'この勤怠情報を削除する権限がありません。',
+        },
+        403,
+      );
+    }
+
+    return await this.attendancesRepository.softDelete(existAttendance);
+  }
 }

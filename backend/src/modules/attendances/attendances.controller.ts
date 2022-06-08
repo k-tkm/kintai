@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -46,5 +47,11 @@ export class AttendancesController {
     @Body() body: CreateAttendanceDto,
   ): Promise<Attendance> {
     return this.attendancesService.update(params.id, req.user.userID, body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  delete(@Req() req: RequestWithUserID, @Param() params: FindOneParams) {
+    return this.attendancesService.delete(req.user.userID, params.id);
   }
 }
