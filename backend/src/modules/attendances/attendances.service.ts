@@ -81,6 +81,6 @@ export class AttendancesService {
       );
     }
 
-    return await this.attendancesRepository.softDelete(existAttendance);
+    await this.attendancesRepository.softDelete(existAttendance);
   }
 }
