@@ -7,12 +7,9 @@ const Login = () => {
     firstName: string;
     email: string;
   }) => {
-    const res = await axiosInstance.post<string>(
-      "http://localhost:9000/users",
-      {
-        ...userData,
-      }
-    );
+    const res = await axiosInstance.post<string>("users", {
+      ...userData,
+    });
     localStorage.setItem("accessToken", res.data);
   };
   return (
