@@ -1,4 +1,3 @@
-import axios from "axios";
 import GoogleLogin, { GoogleLoginResponse } from "react-google-login";
 import { useAPIsaveUser } from "../../hooks/users/useAPISaveUser";
 import { axiosInstance } from "../../utils/url";
