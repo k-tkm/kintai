@@ -1,6 +1,6 @@
+import { Box } from "@chakra-ui/react";
 import GoogleLogin, { GoogleLoginResponse } from "react-google-login";
 import { useAPIsaveUser } from "../../hooks/users/useAPISaveUser";
-import { axiosInstance } from "../../utils/url";
 const Login = () => {
   const { mutate: saveUser } = useAPIsaveUser({
     onSuccess: (token) => {
@@ -9,7 +9,12 @@ const Login = () => {
   });
 
   return (
-    <>
+    <Box
+      h="calc(100vh)"
+      display={"flex"}
+      alignItems={"center"}
+      justifyContent={"center"}
+    >
       <GoogleLogin
         clientId="441283631273-taavhqp5p1lf2p17s7nn60354sjarc0j.apps.googleusercontent.com"
         buttonText="Login"
@@ -22,8 +27,9 @@ const Login = () => {
           });
         }}
         onFailure={() => console.log("login faiuler")}
+        style={{ width: 500 }}
       />
-    </>
+    </Box>
   );
 };
 
