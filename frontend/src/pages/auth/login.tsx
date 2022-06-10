@@ -1,17 +1,14 @@
 import axios from "axios";
 import GoogleLogin, { GoogleLoginResponse } from "react-google-login";
+import { useAPIsaveUser } from "../../hooks/users/useAPISaveUser";
 import { axiosInstance } from "../../utils/url";
 const Login = () => {
-  const saveUser = async (userData: {
-    lastName: string;
-    firstName: string;
-    email: string;
-  }) => {
-    const res = await axiosInstance.post<string>("users", {
-      ...userData,
-    });
-    localStorage.setItem("accessToken", res.data);
-  };
+  const { mutate: saveUser } = useAPIsaveUser({
+    onSuccess: (token) => {
+      localStorage.setItem("accessToken", token);
+    },
+  });
+
   return (
     <>
       <GoogleLogin
