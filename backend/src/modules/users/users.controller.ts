@@ -15,11 +15,6 @@ import { FindOneParams } from './Dto/FindeOneParams';
 import { SaveUserDto } from './Dto/SaveUserDto';
 import { UsersService } from './users.service';
 
-export type UserDataType = {
-  email: string;
-  lastName: string;
-  firstName: string;
-};
 @Controller('users')
 export class UsersController {
   constructor(
