@@ -28,17 +28,17 @@ export class UsersService {
     const existUser = await this.usersRepository.findOne({
       email: email,
     });
-    let savedUser: User;
+
     if (existUser) {
-      savedUser = await this.usersRepository.save({
+      const updatedUser = await this.usersRepository.save({
         ...existUser,
         lastName: lastName,
         firstName: firstName,
       });
-    } else {
-      savedUser = await this.usersRepository.save(userData);
+      return updatedUser;
     }
 
+    const savedUser = await this.usersRepository.save(userData);
     return savedUser;
   }
 
