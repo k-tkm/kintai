@@ -48,6 +48,6 @@ export class UsersController {
 
   @Delete('/:id')
   async delete(@Param() params: FindOneParams) {
-    this.usersService.delete(params.id);
+    await this.usersService.delete(params.id);
   }
 }
