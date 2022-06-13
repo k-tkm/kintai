@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Post,
   UseGuards,
@@ -47,6 +48,7 @@ export class UsersController {
   }
 
   @Delete('/:id')
+  @HttpCode(204)
   async delete(@Param() params: FindOneParams) {
     await this.usersService.delete(params.id);
   }
