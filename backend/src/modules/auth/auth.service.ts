@@ -7,6 +7,6 @@ export class AuthService {
 
   async issueToken(payload: { userID: number }) {
     const token = this.jwtService.sign(payload);
-    return { token: token };
+    return { token };
   }
 }
