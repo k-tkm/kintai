@@ -44,7 +44,7 @@ export class UsersController {
     const payload = {
       userID: savedUser.id,
     };
-    return await this.authService.login(payload);
+    return await this.authService.issueToken(payload);
   }
 
   @Delete('/:id')
