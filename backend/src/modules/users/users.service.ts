@@ -11,14 +11,14 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  getUsers(): Promise<User[]> {
-    return this.usersRepository.find({
+  async getUsers(): Promise<User[]> {
+    return await this.usersRepository.find({
       relations: ['userDepartments', 'userDepartments.department'],
     });
   }
 
-  getUserDetail(userID: number): Promise<User> {
-    return this.usersRepository.findOne(userID, {
+  async getUserDetail(userID: number): Promise<User> {
+    return await this.usersRepository.findOne(userID, {
       relations: ['userDepartments', 'userDepartments.department'],
     });
   }
@@ -43,6 +43,6 @@ export class UsersService {
   }
 
   async delete(userID: number) {
-    this.usersRepository.softDelete(userID);
+    await this.usersRepository.softDelete(userID);
   }
 }
