@@ -30,7 +30,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('/:id')
   async getUserDetail(@Param() params: GetUserParamsDto): Promise<User> {
-    return await this.usersService.getUserDetail(params.id);
+    return await this.usersService.getUserDetail(Number(params.id));
   }
 
   @Post()
@@ -45,6 +45,6 @@ export class UsersController {
   @Delete('/:id')
   @HttpCode(204)
   async delete(@Param() params: GetUserParamsDto) {
-    await this.usersService.delete(params.id);
+    await this.usersService.delete(Number(params.id));
   }
 }
