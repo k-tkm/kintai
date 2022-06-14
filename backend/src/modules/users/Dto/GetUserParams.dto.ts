@@ -1,6 +1,6 @@
 import { IsNumberString } from 'class-validator';
 
-export class FindOneParams {
+export class GetUserParamsDto {
   @IsNumberString({}, { message: 'このユーザーは存在していません。' })
   id: number;
 }
