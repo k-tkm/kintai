@@ -11,6 +11,12 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
+  private async findUserByEmail(email: string): Promise<User> {
+    return await this.usersRepository.findOne({
+      email: email,
+    });
+  }
+
   async getUsers(): Promise<User[]> {
     return await this.usersRepository.find({
       relations: ['userDepartments', 'userDepartments.department'],
@@ -25,9 +31,7 @@ export class UsersService {
 
   async save(userData: SaveUserDto): Promise<User> {
     const { lastName, firstName, email } = userData;
-    const existUser = await this.usersRepository.findOne({
-      email: email,
-    });
+    const existUser = await this.findUserByEmail(email);
 
     if (existUser) {
       const updatedUser = await this.usersRepository.save({
