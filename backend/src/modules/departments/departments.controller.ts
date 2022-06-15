@@ -20,36 +20,41 @@ export class DepartmentsController {
   constructor(private departmentsService: DepartmentsService) {}
   @UseGuards(JwtAuthGuard)
   @Get()
-  getDepartments(): Promise<Department[]> {
-    return this.departmentsService.getDepartments();
+  async getDepartments(): Promise<Department[]> {
+    return await this.departmentsService.getDepartments();
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  getDepartmentDetail(
+  async getDepartmentDetail(
     @Param() params: DepartmentParamsDto,
   ): Promise<Department> {
-    return this.departmentsService.getDepartmentDetail(Number(params.id));
+    return await this.departmentsService.getDepartmentDetail(Number(params.id));
   }
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() departmentData: CreateDepartmentDto): Promise<Department> {
-    return this.departmentsService.create(departmentData);
+  async create(
+    @Body() departmentData: CreateDepartmentDto,
+  ): Promise<Department> {
+    return await this.departmentsService.create(departmentData);
   }
 
   @UseGuards(JwtAuthGuard)
   @Put(':id')
-  update(
+  async update(
     @Param() params: DepartmentParamsDto,
     @Body() departmentData: UpdateDepartmentDto,
   ): Promise<Department> {
-    return this.departmentsService.update(departmentData, Number(params.id));
+    return await this.departmentsService.update(
+      departmentData,
+      Number(params.id),
+    );
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  delete(@Param() params: DepartmentParamsDto) {
-    this.departmentsService.delete(Number(params.id));
+  async delete(@Param() params: DepartmentParamsDto) {
+    await this.departmentsService.delete(Number(params.id));
   }
 }

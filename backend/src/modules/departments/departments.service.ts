@@ -152,7 +152,7 @@ export class DepartmentsService {
     return { ...department, userDepartments: userDepartments };
   }
 
-  delete(departmentID: number) {
-    this.departmentsRepository.softDelete(departmentID);
+  async delete(departmentID: number) {
+    await this.departmentsRepository.softDelete(departmentID);
   }
 }
