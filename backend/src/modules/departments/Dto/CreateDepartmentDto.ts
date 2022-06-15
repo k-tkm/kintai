@@ -2,11 +2,11 @@ import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { User } from 'src/entities/User.entity';
 
 export class CreateDepartmentDto {
-  @IsString({ message: '部署名に入力された値が不正です。' })
+  @IsString({ message: '部署名には文字列を入力してください。' })
   @IsNotEmpty({ message: '部署名は入力必須です。' })
   name: string;
 
-  @IsArray({ message: 'usersに入力された値が不正です。' })
+  @IsArray({ message: 'usersの値は配列で入力してください。' })
   @IsOptional()
   users?: User[];
 }
