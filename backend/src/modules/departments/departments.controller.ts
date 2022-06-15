@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Post,
   Put,
@@ -54,6 +55,7 @@ export class DepartmentsController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
+  @HttpCode(204)
   async delete(@Param() params: DepartmentParamsDto) {
     await this.departmentsService.delete(Number(params.id));
   }
