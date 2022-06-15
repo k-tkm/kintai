@@ -11,7 +11,7 @@ import {
 import { User } from 'src/entities/User.entity';
 import { AuthService } from '../auth/auth.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { GetUserParamsDto } from './Dto/GetUserParams.dto';
+import { UserParamsDto } from './Dto/UserParams.dto';
 import { SaveUserDto } from './Dto/SaveUserDto';
 import { UsersService } from './users.service';
 
@@ -29,7 +29,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Get('/:id')
-  async getUserDetail(@Param() params: GetUserParamsDto): Promise<User> {
+  async getUserDetail(@Param() params: UserParamsDto): Promise<User> {
     return await this.usersService.getUserDetail(Number(params.id));
   }
 
@@ -44,7 +44,7 @@ export class UsersController {
 
   @Delete('/:id')
   @HttpCode(204)
-  async delete(@Param() params: GetUserParamsDto) {
+  async delete(@Param() params: UserParamsDto) {
     await this.usersService.delete(Number(params.id));
   }
 }
