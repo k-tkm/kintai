@@ -34,15 +34,13 @@ export class DepartmentsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  createDepartment(
-    @Body() departmentData: CreateDepartmentDto,
-  ): Promise<Department> {
+  create(@Body() departmentData: CreateDepartmentDto): Promise<Department> {
     return this.departmentsService.create(departmentData);
   }
 
   @UseGuards(JwtAuthGuard)
   @Put(':id')
-  updateDepartment(
+  update(
     @Param() params: DepartmentParamsDto,
     @Body() departmentData: UpdateDepartmentDto,
   ): Promise<Department> {
@@ -51,7 +49,7 @@ export class DepartmentsController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  deleteDepartment(@Param() params: DepartmentParamsDto) {
+  delete(@Param() params: DepartmentParamsDto) {
     this.departmentsService.delete(Number(params.id));
   }
 }
