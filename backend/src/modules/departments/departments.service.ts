@@ -17,7 +17,15 @@ export class DepartmentsService {
     private userDepartmentsRepository: Repository<UserDepartment>,
   ) {}
 
-  private validateDuplicateName(isExistDuplicateName: boolean) {
+  private async validateDuplicateName(
+    departmentName: string,
+    departmentID?: number,
+  ) {
+    const isExistDuplicateName = !!(await this.departmentsRepository.findOne({
+      where: departmentID
+        ? { id: Not(departmentID), name: departmentName }
+        : { name: departmentName },
+    }));
     if (isExistDuplicateName) {
       throw new HttpException(
         {
@@ -86,10 +94,7 @@ export class DepartmentsService {
   }
 
   async create(departmentData: CreateDepartmentDto): Promise<Department> {
-    const isExistDuplicateName = !!(await this.departmentsRepository.findOne({
-      where: { name: departmentData.name },
-    }));
-    this.validateDuplicateName(isExistDuplicateName);
+    await this.validateDuplicateName(departmentData.name);
 
     const department: Department = await this.departmentsRepository.save({
       name: departmentData.name,
@@ -114,10 +119,7 @@ export class DepartmentsService {
     departmentData: UpdateDepartmentDto,
     departmentID: number,
   ): Promise<Department> {
-    const isExistDuplicateName = !!(await this.departmentsRepository.findOne({
-      where: { id: Not(departmentID), name: departmentData.name },
-    }));
-    this.validateDuplicateName(isExistDuplicateName);
+    await this.validateDuplicateName(departmentData.name, departmentID);
 
     const existDepartment = await this.departmentsRepository.findOne(
       departmentID,
