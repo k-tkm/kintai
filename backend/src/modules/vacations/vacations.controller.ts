@@ -13,7 +13,7 @@ import {
 import { Vacation } from 'src/entities/Vacation.entity';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateVacationDto } from './Dto/CreateVacation.Dto';
-import { FindOneParams } from './Dto/FindeOneParams';
+import { VacationParamsDto } from './Dto/vacationParams.dto';
 import { getVacationsQueryDto } from './Dto/getVacationsQuery.Dto';
 import { VacationsService } from './vacations.service';
 
@@ -33,7 +33,7 @@ export class VacationsController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  getVacationDetail(@Param() params: FindOneParams): Promise<Vacation> {
+  getVacationDetail(@Param() params: VacationParamsDto): Promise<Vacation> {
     return this.vacationsService.getVacationDetail(params.id);
   }
 
@@ -50,7 +50,7 @@ export class VacationsController {
   @Put(':id')
   update(
     @Req() req: RequestWithUserID,
-    @Param() params: FindOneParams,
+    @Param() params: VacationParamsDto,
     @Body() body: CreateVacationDto,
   ): Promise<Vacation> {
     return this.vacationsService.update(params.id, req.user.userID, body);
@@ -58,7 +58,7 @@ export class VacationsController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  delete(@Req() req: RequestWithUserID, @Param() params: FindOneParams) {
+  delete(@Req() req: RequestWithUserID, @Param() params: VacationParamsDto) {
     return this.vacationsService.delete(req.user.userID, params.id);
   }
 }
