@@ -73,19 +73,21 @@ export class DepartmentsService {
     });
 
     if (existUsersDepartment) {
-      return await this.userDepartmentsRepository.save({
+      const updatedBelonging = await this.userDepartmentsRepository.save({
         ...existUsersDepartment,
         department: department,
         user: user,
         updatedAt: new Date(),
         deletedAt: null,
       });
-    } else {
-      return await this.userDepartmentsRepository.save({
-        department: department,
-        user: user,
-      });
+      return updatedBelonging;
     }
+
+    const createdBelonging = await this.userDepartmentsRepository.save({
+      department: department,
+      user: user,
+    });
+    return createdBelonging;
   }
 
   async getDepartments(): Promise<Department[]> {
@@ -145,16 +147,14 @@ export class DepartmentsService {
       });
       if (departmentData.users.length === 0) {
         await this.removeAllBelonging(existUsersDepartments);
-      } else {
-        await this.removeBelonging({
-          users: departmentData.users,
-          existUsersDepartments: existUsersDepartments,
-        });
-        for (const user of departmentData.users) {
-          userDepartments.push(
-            await this.updateBelonging({ user, department }),
-          );
-        }
+        return;
+      }
+      await this.removeBelonging({
+        users: departmentData.users,
+        existUsersDepartments: existUsersDepartments,
+      });
+      for (const user of departmentData.users) {
+        userDepartments.push(await this.updateBelonging({ user, department }));
       }
     }
     return { ...department, userDepartments: userDepartments };
