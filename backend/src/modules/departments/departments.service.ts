@@ -36,6 +36,7 @@ export class DepartmentsService {
       );
     }
   }
+
   private async removeAllBelonging(existUsersDepartments: UserDepartment[]) {
     const existUsersDepartmentIds = existUsersDepartments.map((d) => d.id);
     await this.userDepartmentsRepository.softDelete(existUsersDepartmentIds);
@@ -87,14 +88,14 @@ export class DepartmentsService {
     }
   }
 
-  getDepartments(): Promise<Department[]> {
-    return this.departmentsRepository.find({
+  async getDepartments(): Promise<Department[]> {
+    return await this.departmentsRepository.find({
       relations: ['userDepartments', 'userDepartments.user'],
     });
   }
 
-  getDepartmentDetail(departmentID: number): Promise<Department> {
-    return this.departmentsRepository.findOne(departmentID, {
+  async getDepartmentDetail(departmentID: number): Promise<Department> {
+    return await this.departmentsRepository.findOne(departmentID, {
       relations: ['userDepartments', 'userDepartments.user'],
     });
   }
