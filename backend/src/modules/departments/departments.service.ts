@@ -36,6 +36,10 @@ export class DepartmentsService {
       );
     }
   }
+  private async removeAllBelonging(existUsersDepartments: UserDepartment[]) {
+    const existUsersDepartmentIds = existUsersDepartments.map((d) => d.id);
+    await this.userDepartmentsRepository.softDelete(existUsersDepartmentIds);
+  }
 
   private async removeBelonging({
     users,
@@ -49,7 +53,9 @@ export class DepartmentsService {
       .filter((d) => !newUsersIDs.includes(d?.user.id))
       .map((d) => d.id);
     if (deletedUserDepartmentsIDs.length) {
-      this.userDepartmentsRepository.softDelete(deletedUserDepartmentsIDs);
+      await this.userDepartmentsRepository.softDelete(
+        deletedUserDepartmentsIDs,
+      );
     }
   }
 
@@ -137,8 +143,7 @@ export class DepartmentsService {
         relations: ['user'],
       });
       if (departmentData.users.length === 0) {
-        const existUsersDepartmentIds = existUsersDepartments.map((d) => d.id);
-        this.userDepartmentsRepository.softDelete(existUsersDepartmentIds);
+        await this.removeAllBelonging(existUsersDepartments);
       } else {
         await this.removeBelonging({
           users: departmentData.users,
