@@ -133,16 +133,18 @@ export class DepartmentsService {
     const existDepartment = await this.departmentsRepository.findOne(
       departmentID,
     );
-    const department: Department = await this.departmentsRepository.save({
-      ...existDepartment,
-      name: departmentData.name,
-      updatedAt: new Date(),
-    });
+    const updatedDepartment: Department = await this.departmentsRepository.save(
+      {
+        ...existDepartment,
+        name: departmentData.name,
+        updatedAt: new Date(),
+      },
+    );
 
     const userDepartments: UserDepartment[] = [];
     if (departmentData.users) {
       const existUsersDepartments = await this.userDepartmentsRepository.find({
-        where: { department: department.id },
+        where: { department: updatedDepartment.id },
         relations: ['user'],
       });
       if (departmentData.users.length === 0) {
@@ -154,10 +156,12 @@ export class DepartmentsService {
         existUsersDepartments: existUsersDepartments,
       });
       for (const user of departmentData.users) {
-        userDepartments.push(await this.updateBelonging({ user, department }));
+        userDepartments.push(
+          await this.updateBelonging({ user, department: updatedDepartment }),
+        );
       }
     }
-    return { ...department, userDepartments: userDepartments };
+    return { ...updatedDepartment, userDepartments: userDepartments };
   }
 
   async delete(departmentID: number) {
