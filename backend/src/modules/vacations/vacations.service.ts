@@ -64,7 +64,7 @@ export class VacationsService {
     const { date, type, description } = newData;
     const requestUser = await this.usersRepository.findOne(userID);
 
-    return this.vacationsRepository.save({
+    return await this.vacationsRepository.save({
       date,
       type,
       description,
@@ -89,7 +89,6 @@ export class VacationsService {
   async delete(vacationID: number, userID: number) {
     const existVacation = await this.findVacationWithUser(vacationID);
     await this.checkPermission({ existVacation, userID });
-
-    return await this.vacationsRepository.softDelete(existVacation);
+    await this.vacationsRepository.softDelete(existVacation);
   }
 }

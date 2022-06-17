@@ -28,33 +28,37 @@ export class VacationsController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  getVacations(@Query() query: getVacationsQueryDto): Promise<Vacation[]> {
-    return this.vacationsService.getVacations(query);
+  async getVacations(
+    @Query() query: getVacationsQueryDto,
+  ): Promise<Vacation[]> {
+    return await this.vacationsService.getVacations(query);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  getVacationDetail(@Param() params: VacationParamsDto): Promise<Vacation> {
-    return this.vacationsService.getVacationDetail(Number(params.id));
+  async getVacationDetail(
+    @Param() params: VacationParamsDto,
+  ): Promise<Vacation> {
+    return await this.vacationsService.getVacationDetail(Number(params.id));
   }
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(
+  async create(
     @Req() req: RequestWithUserID,
     @Body() body: CreateVacationDto,
   ): Promise<Vacation> {
-    return this.vacationsService.create(req.user.userID, body);
+    return await this.vacationsService.create(req.user.userID, body);
   }
 
   @UseGuards(JwtAuthGuard)
   @Put(':id')
-  update(
+  async update(
     @Req() req: RequestWithUserID,
     @Param() params: VacationParamsDto,
     @Body() body: UpdateDepartmentDto,
   ): Promise<Vacation> {
-    return this.vacationsService.update(
+    return await this.vacationsService.update(
       Number(params.id),
       req.user.userID,
       body,
@@ -63,7 +67,10 @@ export class VacationsController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  delete(@Req() req: RequestWithUserID, @Param() params: VacationParamsDto) {
-    return this.vacationsService.delete(req.user.userID, Number(params.id));
+  async delete(
+    @Req() req: RequestWithUserID,
+    @Param() params: VacationParamsDto,
+  ) {
+    await this.vacationsService.delete(req.user.userID, Number(params.id));
   }
 }
