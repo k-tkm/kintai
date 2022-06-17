@@ -60,8 +60,8 @@ export class VacationsService {
     return await this.findVacationWithUser(vacationID);
   }
 
-  async create(userID: number, body: CreateVacationDto): Promise<Vacation> {
-    const { date, type, description } = body;
+  async create(userID: number, newData: CreateVacationDto): Promise<Vacation> {
+    const { date, type, description } = newData;
     const requestUser = await this.usersRepository.findOne(userID);
 
     return this.vacationsRepository.save({
@@ -75,13 +75,13 @@ export class VacationsService {
   async update(
     vacationID: number,
     userID: number,
-    newDate: UpdateDepartmentDto,
+    newData: UpdateDepartmentDto,
   ): Promise<Vacation> {
     const existVacation = await this.findVacationWithUser(vacationID);
     await this.checkPermission({ existVacation, userID });
     return await this.vacationsRepository.save({
       ...existVacation,
-      ...newDate,
+      ...newData,
       updatedAt: new Date(),
     });
   }
