@@ -105,7 +105,7 @@ export class DepartmentsService {
   async create(departmentData: CreateDepartmentDto): Promise<Department> {
     await this.validateDuplicateName(departmentData.name);
 
-    const department: Department = await this.departmentsRepository.save({
+    const newDepartment: Department = await this.departmentsRepository.save({
       name: departmentData.name,
     });
 
@@ -114,14 +114,14 @@ export class DepartmentsService {
       for (const user of departmentData.users) {
         userDepartments.push(
           await this.userDepartmentsRepository.save({
-            department: department,
+            department: newDepartment,
             user: user,
           }),
         );
       }
     }
 
-    return { ...department, userDepartments: userDepartments };
+    return { ...newDepartment, userDepartments: userDepartments };
   }
 
   async update(
