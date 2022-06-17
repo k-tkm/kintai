@@ -34,7 +34,7 @@ export class VacationsController {
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   getVacationDetail(@Param() params: VacationParamsDto): Promise<Vacation> {
-    return this.vacationsService.getVacationDetail(params.id);
+    return this.vacationsService.getVacationDetail(Number(params.id));
   }
 
   @UseGuards(JwtAuthGuard)
@@ -53,12 +53,16 @@ export class VacationsController {
     @Param() params: VacationParamsDto,
     @Body() body: CreateVacationDto,
   ): Promise<Vacation> {
-    return this.vacationsService.update(params.id, req.user.userID, body);
+    return this.vacationsService.update(
+      Number(params.id),
+      req.user.userID,
+      body,
+    );
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   delete(@Req() req: RequestWithUserID, @Param() params: VacationParamsDto) {
-    return this.vacationsService.delete(req.user.userID, params.id);
+    return this.vacationsService.delete(req.user.userID, Number(params.id));
   }
 }
