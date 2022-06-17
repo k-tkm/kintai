@@ -3,7 +3,7 @@ import { User } from 'src/entities/User.entity';
 
 export class UpdateDepartmentDto {
   @IsString({ message: '部署名には文字列を使用してください。' })
-  @IsNotEmpty({ message: '部署名は入力必須です。' })
+  @IsNotEmpty({ message: '部署名は必須項目です。' })
   @IsOptional()
   name?: string;
 
