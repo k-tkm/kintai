@@ -11,9 +11,9 @@ import {
 } from '@nestjs/common';
 import { Department } from 'src/entities/Department.entity';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ParamsDto } from '../Dto/Params.dto';
 import { DepartmentsService } from './departments.service';
 import { CreateDepartmentDto } from './Dto/CreateDepartmentDto';
-import { DepartmentParamsDto } from './Dto/DepartmentParams.dto';
 import { UpdateDepartmentDto } from './Dto/UpdateDepartmentDto';
 
 @Controller('departments')
@@ -27,9 +27,7 @@ export class DepartmentsController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async getDepartmentDetail(
-    @Param() params: DepartmentParamsDto,
-  ): Promise<Department> {
+  async getDepartmentDetail(@Param() params: ParamsDto): Promise<Department> {
     return await this.departmentsService.getDepartmentDetail(Number(params.id));
   }
 
@@ -44,7 +42,7 @@ export class DepartmentsController {
   @UseGuards(JwtAuthGuard)
   @Put(':id')
   async update(
-    @Param() params: DepartmentParamsDto,
+    @Param() params: ParamsDto,
     @Body() departmentData: UpdateDepartmentDto,
   ): Promise<Department> {
     return await this.departmentsService.update(
@@ -56,7 +54,7 @@ export class DepartmentsController {
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @HttpCode(204)
-  async delete(@Param() params: DepartmentParamsDto) {
+  async delete(@Param() params: ParamsDto) {
     await this.departmentsService.delete(Number(params.id));
   }
 }
