@@ -35,6 +35,12 @@ export class VacationsService {
     }
   }
 
+  private async findVacationWithUser(vacationID: number): Promise<Vacation> {
+    return await this.vacationsRepository.findOne(vacationID, {
+      relations: ['user'],
+    });
+  }
+
   async getVacations(query: getVacationsQueryDto): Promise<Vacation[]> {
     const { startDate, endDate, user_id } = query;
     const vacations = await this.vacationsRepository
@@ -51,9 +57,7 @@ export class VacationsService {
   }
 
   async getVacationDetail(vacationID: number): Promise<Vacation> {
-    return this.vacationsRepository.findOne(vacationID, {
-      relations: ['user'],
-    });
+    return await this.findVacationWithUser(vacationID);
   }
 
   async create(userID: number, body: CreateVacationDto): Promise<Vacation> {
@@ -73,9 +77,7 @@ export class VacationsService {
     userID: number,
     newDate: UpdateDepartmentDto,
   ): Promise<Vacation> {
-    const existVacation = await this.vacationsRepository.findOne(vacationID, {
-      relations: ['user'],
-    });
+    const existVacation = await this.findVacationWithUser(vacationID);
     await this.checkPermission({ existVacation, userID });
     return await this.vacationsRepository.save({
       ...existVacation,
@@ -85,9 +87,7 @@ export class VacationsService {
   }
 
   async delete(vacationID: number, userID: number) {
-    const existVacation = await this.vacationsRepository.findOne(vacationID, {
-      relations: ['user'],
-    });
+    const existVacation = await this.findVacationWithUser(vacationID);
     await this.checkPermission({ existVacation, userID });
 
     return await this.vacationsRepository.softDelete(existVacation);
