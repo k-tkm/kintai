@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/User.entity';
 import { Vacation } from 'src/entities/Vacation.entity';
 import { Repository } from 'typeorm';
+import { UpdateDepartmentDto } from '../departments/Dto/UpdateDepartmentDto';
 import { CreateVacationDto } from './Dto/CreateVacation.Dto';
 import { getVacationsQueryDto } from './Dto/getVacationsQuery.Dto';
 
@@ -52,12 +53,11 @@ export class VacationsService {
   async update(
     vacationID: number,
     userID: number,
-    newDate: CreateVacationDto,
+    newDate: UpdateDepartmentDto,
   ): Promise<Vacation> {
     const existVacation = await this.vacationsRepository.findOne(vacationID, {
       relations: ['user'],
     });
-    console.log('call ^^^^^^^^^^^^^^^^^^^^^^^^^^', existVacation);
     if (existVacation.user.id !== userID) {
       throw new HttpException(
         {

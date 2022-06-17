@@ -16,6 +16,7 @@ import { CreateVacationDto } from './Dto/CreateVacation.Dto';
 import { VacationParamsDto } from './Dto/vacationParams.dto';
 import { getVacationsQueryDto } from './Dto/getVacationsQuery.Dto';
 import { VacationsService } from './vacations.service';
+import { UpdateDepartmentDto } from '../departments/Dto/UpdateDepartmentDto';
 
 type RequestWithUserID = Request & {
   user: { userID: number };
@@ -51,7 +52,7 @@ export class VacationsController {
   update(
     @Req() req: RequestWithUserID,
     @Param() params: VacationParamsDto,
-    @Body() body: CreateVacationDto,
+    @Body() body: UpdateDepartmentDto,
   ): Promise<Vacation> {
     return this.vacationsService.update(
       Number(params.id),
