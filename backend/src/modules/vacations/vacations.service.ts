@@ -17,6 +17,24 @@ export class VacationsService {
     private usersRepository: Repository<User>,
   ) {}
 
+  private async checkPermission({
+    existVacation,
+    userID,
+  }: {
+    existVacation: Vacation;
+    userID: number;
+  }) {
+    if (existVacation.user.id !== userID) {
+      throw new HttpException(
+        {
+          statusCode: 403,
+          error: 'この休暇情報を編集する権限がありません。',
+        },
+        403,
+      );
+    }
+  }
+
   async getVacations(query: getVacationsQueryDto): Promise<Vacation[]> {
     const { startDate, endDate, user_id } = query;
     const vacations = await this.vacationsRepository
@@ -58,15 +76,7 @@ export class VacationsService {
     const existVacation = await this.vacationsRepository.findOne(vacationID, {
       relations: ['user'],
     });
-    if (existVacation.user.id !== userID) {
-      throw new HttpException(
-        {
-          statusCode: 403,
-          error: 'この休暇情報を編集する権限がありません。',
-        },
-        403,
-      );
-    }
+    await this.checkPermission({ existVacation, userID });
     return await this.vacationsRepository.save({
       ...existVacation,
       ...newDate,
@@ -78,15 +88,7 @@ export class VacationsService {
     const existVacation = await this.vacationsRepository.findOne(vacationID, {
       relations: ['user'],
     });
-    if (existVacation.user.id !== userID) {
-      throw new HttpException(
-        {
-          statusCode: 403,
-          error: 'この休暇情報を削除する権限がありません。',
-        },
-        403,
-      );
-    }
+    await this.checkPermission({ existVacation, userID });
 
     return await this.vacationsRepository.softDelete(existVacation);
   }
