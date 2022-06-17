@@ -42,6 +42,7 @@ export class UsersController {
     return await this.authService.generateToken(payload);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete('/:id')
   @HttpCode(204)
   async delete(@Param() params: UserParamsDto) {
