@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/User.entity';
 import { Repository } from 'typeorm';
-import { AuthService } from '../auth/auth.service';
-import { userDataType } from './users.controller';
+import { SaveUserDto } from './Dto/SaveUserDto';
 
 @Injectable()
 export class UsersService {
@@ -13,38 +11,42 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  getUsers(): Promise<User[]> {
-    return this.usersRepository.find({
-      relations: ['userDepartments', 'userDepartments.department'],
-    });
-  }
-
-  getUserDetail(userID: number): Promise<User> {
-    return this.usersRepository.findOne(userID, {
-      relations: ['userDepartments', 'userDepartments.department'],
-    });
-  }
-
-  async saveUser(userData: userDataType): Promise<User> {
-    const { lastName, firstName, email } = userData;
-    const existUser = await this.usersRepository.findOne({
+  private async findUserByEmail(email: string): Promise<User> {
+    return await this.usersRepository.findOne({
       email: email,
     });
-    let savedUser: User;
+  }
+
+  async getUsers(): Promise<User[]> {
+    return await this.usersRepository.find({
+      relations: ['userDepartments', 'userDepartments.department'],
+    });
+  }
+
+  async getUserDetail(userID: number): Promise<User> {
+    return await this.usersRepository.findOne(userID, {
+      relations: ['userDepartments', 'userDepartments.department'],
+    });
+  }
+
+  async save(userData: SaveUserDto): Promise<User> {
+    const { lastName, firstName, email } = userData;
+    const existUser = await this.findUserByEmail(email);
+
     if (existUser) {
-      savedUser = await this.usersRepository.save({
+      const updatedUser = await this.usersRepository.save({
         ...existUser,
         lastName: lastName,
         firstName: firstName,
       });
-    } else {
-      savedUser = this.usersRepository.create(userData);
+      return updatedUser;
     }
 
+    const savedUser = await this.usersRepository.save(userData);
     return savedUser;
   }
 
-  async deleteUser(userID: number) {
-    this.usersRepository.softDelete(userID);
+  async delete(userID: number) {
+    await this.usersRepository.softDelete(userID);
   }
 }
