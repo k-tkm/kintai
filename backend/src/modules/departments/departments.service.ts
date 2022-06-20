@@ -17,15 +17,26 @@ export class DepartmentsService {
     private userDepartmentsRepository: Repository<UserDepartment>,
   ) {}
 
-  private async validateDuplicateName(
+  private async checkExistDuplicateName(
     departmentName: string,
     departmentID?: number,
-  ) {
+  ): Promise<boolean> {
     const isExistDuplicateName = !!(await this.departmentsRepository.findOne({
       where: departmentID
         ? { id: Not(departmentID), name: departmentName }
         : { name: departmentName },
     }));
+    return isExistDuplicateName;
+  }
+
+  private async validateDuplicateName(
+    departmentName: string,
+    departmentID?: number,
+  ) {
+    const isExistDuplicateName = await this.checkExistDuplicateName(
+      departmentName,
+      departmentID,
+    );
     if (isExistDuplicateName) {
       throw new ConflictException('この部署名はすでに使用されています。');
     }
