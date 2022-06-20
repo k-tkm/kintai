@@ -21,31 +21,6 @@ export class DepartmentsService {
     return await this.departmentsRepository.findOne(departmentID);
   }
 
-  private async checkExistDuplicateName(
-    departmentName: string,
-    departmentID?: number,
-  ): Promise<boolean> {
-    const isExistDuplicateName = !!(await this.departmentsRepository.findOne({
-      where: departmentID
-        ? { id: Not(departmentID), name: departmentName }
-        : { name: departmentName },
-    }));
-    return isExistDuplicateName;
-  }
-
-  private async validateDuplicateName(
-    departmentName: string,
-    departmentID?: number,
-  ) {
-    const isExistDuplicateName = await this.checkExistDuplicateName(
-      departmentName,
-      departmentID,
-    );
-    if (isExistDuplicateName) {
-      throw new ConflictException('この部署名はすでに使用されています。');
-    }
-  }
-
   private async removeAllBelonging(existUsersDepartments: UserDepartment[]) {
     const existUsersDepartmentIds = existUsersDepartments.map((d) => d.id);
     await this.userDepartmentsRepository.softDelete(existUsersDepartmentIds);
@@ -112,8 +87,6 @@ export class DepartmentsService {
   }
 
   async create(departmentData: CreateDepartmentDto): Promise<Department> {
-    await this.validateDuplicateName(departmentData.name);
-
     const newDepartment: Department = await this.departmentsRepository.save({
       name: departmentData.name,
     });
@@ -137,8 +110,6 @@ export class DepartmentsService {
     departmentData: UpdateDepartmentDto,
     departmentID: number,
   ): Promise<Department> {
-    await this.validateDuplicateName(departmentData.name, departmentID);
-
     const existDepartment = await this.findDepartmentByID(departmentID);
     const updatedDepartment: Department = await this.departmentsRepository.save(
       {
