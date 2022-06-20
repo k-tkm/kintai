@@ -17,6 +17,10 @@ export class DepartmentsService {
     private userDepartmentsRepository: Repository<UserDepartment>,
   ) {}
 
+  private async findDepartmentByID(departmentID: number): Promise<Department> {
+    return await this.departmentsRepository.findOne(departmentID);
+  }
+
   private async checkExistDuplicateName(
     departmentName: string,
     departmentID?: number,
@@ -135,9 +139,7 @@ export class DepartmentsService {
   ): Promise<Department> {
     await this.validateDuplicateName(departmentData.name, departmentID);
 
-    const existDepartment = await this.departmentsRepository.findOne(
-      departmentID,
-    );
+    const existDepartment = await this.findDepartmentByID(departmentID);
     const updatedDepartment: Department = await this.departmentsRepository.save(
       {
         ...existDepartment,
