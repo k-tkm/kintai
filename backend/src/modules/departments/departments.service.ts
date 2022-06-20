@@ -37,13 +37,13 @@ export class DepartmentsService {
   }
 
   private async removeBelonging({
-    users,
+    newUsersBelonging,
     existUsersDepartments,
   }: {
-    users: User[];
+    newUsersBelonging: User[];
     existUsersDepartments: UserDepartment[];
   }) {
-    const newUsersIDs = users.map((u) => u.id);
+    const newUsersIDs = newUsersBelonging.map((u) => u.id);
     const deletedUserDepartmentsIDs = existUsersDepartments
       .filter((d) => !newUsersIDs.includes(d?.user.id))
       .map((d) => d.id);
@@ -143,7 +143,7 @@ export class DepartmentsService {
         return;
       }
       await this.removeBelonging({
-        users: departmentData.users,
+        newUsersBelonging: departmentData.users,
         existUsersDepartments: existUsersDepartments,
       });
       for (const user of departmentData.users) {
