@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { ConflictException, HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Department } from 'src/entities/Department.entity';
 import { User } from 'src/entities/User.entity';
@@ -27,13 +27,7 @@ export class DepartmentsService {
         : { name: departmentName },
     }));
     if (isExistDuplicateName) {
-      throw new HttpException(
-        {
-          statusCode: 409,
-          error: '既に作成されている部署名です。',
-        },
-        409,
-      );
+      throw new ConflictException('この部署名はすでに使用されています。');
     }
   }
 
