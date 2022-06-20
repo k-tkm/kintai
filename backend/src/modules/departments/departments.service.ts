@@ -21,6 +21,16 @@ export class DepartmentsService {
     return await this.departmentsRepository.findOne(departmentID);
   }
 
+  private async findeUserDepartmentWithDeleted(
+    userID: number,
+    departmentID: number,
+  ): Promise<UserDepartment> {
+    return await this.userDepartmentsRepository.findOne({
+      where: { user: userID, department: departmentID },
+      withDeleted: true,
+    });
+  }
+
   private async removeAllBelonging(existUsersDepartments: UserDepartment[]) {
     const existUsersDepartmentIds = existUsersDepartments.map((d) => d.id);
     await this.userDepartmentsRepository.softDelete(existUsersDepartmentIds);
@@ -51,10 +61,10 @@ export class DepartmentsService {
     user: User;
     department: Department;
   }): Promise<UserDepartment> {
-    const existUsersDepartment = await this.userDepartmentsRepository.findOne({
-      where: { user: user.id, department: department.id },
-      withDeleted: true,
-    });
+    const existUsersDepartment = await this.findeUserDepartmentWithDeleted(
+      user.id,
+      department.id,
+    );
 
     if (existUsersDepartment) {
       const updatedBelonging = await this.userDepartmentsRepository.save({
