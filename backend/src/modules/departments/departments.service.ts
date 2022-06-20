@@ -84,6 +84,33 @@ export class DepartmentsService {
     return createdBelonging;
   }
 
+  private async updateUserDepartments(
+    newUsersBelonging: User[],
+    updatedDepartment: Department,
+  ): Promise<UserDepartment[]> {
+    const userDepartments: UserDepartment[] = [];
+    if (newUsersBelonging) {
+      const existUsersDepartments = await this.userDepartmentsRepository.find({
+        where: { department: updatedDepartment.id },
+        relations: ['user'],
+      });
+      if (newUsersBelonging.length === 0) {
+        await this.removeAllBelonging(existUsersDepartments);
+        return;
+      }
+      await this.removeBelonging({
+        newUsersBelonging: newUsersBelonging,
+        existUsersDepartments: existUsersDepartments,
+      });
+      for (const user of newUsersBelonging) {
+        userDepartments.push(
+          await this.updateBelonging({ user, department: updatedDepartment }),
+        );
+      }
+    }
+    return userDepartments;
+  }
+
   async getDepartments(): Promise<Department[]> {
     return await this.departmentsRepository.find({
       relations: ['userDepartments', 'userDepartments.user'],
@@ -131,28 +158,11 @@ export class DepartmentsService {
         updatedAt: new Date(),
       },
     );
-
-    const userDepartments: UserDepartment[] = [];
-    if (departmentData.users) {
-      const existUsersDepartments = await this.userDepartmentsRepository.find({
-        where: { department: updatedDepartment.id },
-        relations: ['user'],
-      });
-      if (departmentData.users.length === 0) {
-        await this.removeAllBelonging(existUsersDepartments);
-        return;
-      }
-      await this.removeBelonging({
-        newUsersBelonging: departmentData.users,
-        existUsersDepartments: existUsersDepartments,
-      });
-      for (const user of departmentData.users) {
-        userDepartments.push(
-          await this.updateBelonging({ user, department: updatedDepartment }),
-        );
-      }
-    }
-    return { ...updatedDepartment, userDepartments: userDepartments };
+    const updatedUserDepartments = await this.updateUserDepartments(
+      departmentData.users,
+      updatedDepartment,
+    );
+    return { ...updatedDepartment, userDepartments: updatedUserDepartments };
   }
 
   async delete(departmentID: number) {
