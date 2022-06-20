@@ -67,7 +67,7 @@ export class DepartmentsService {
     );
 
     if (existUsersDepartment) {
-      const updatedBelonging = await this.userDepartmentsRepository.save({
+      const updatedBelonging = this.userDepartmentsRepository.create({
         ...existUsersDepartment,
         department: department,
         user: user,
@@ -77,7 +77,7 @@ export class DepartmentsService {
       return updatedBelonging;
     }
 
-    const createdBelonging = await this.userDepartmentsRepository.save({
+    const createdBelonging = this.userDepartmentsRepository.create({
       department: department,
       user: user,
     });
@@ -108,7 +108,10 @@ export class DepartmentsService {
         );
       }
     }
-    return userDepartments;
+    const updatedUserDepartments = await this.userDepartmentsRepository.save(
+      userDepartments,
+    );
+    return updatedUserDepartments;
   }
 
   async getDepartments(): Promise<Department[]> {
