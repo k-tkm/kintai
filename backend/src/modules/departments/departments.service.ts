@@ -105,7 +105,7 @@ export class DepartmentsService {
     if (departmentData.users.length) {
       for (const user of departmentData.users) {
         userDepartments.push(
-          await this.userDepartmentsRepository.save({
+          this.userDepartmentsRepository.create({
             department: newDepartment,
             user: user,
           }),
@@ -113,7 +113,10 @@ export class DepartmentsService {
       }
     }
 
-    return { ...newDepartment, userDepartments: userDepartments };
+    const savedUserDepartment = await this.userDepartmentsRepository.save(
+      userDepartments,
+    );
+    return { ...newDepartment, userDepartments: savedUserDepartment };
   }
 
   async update(
