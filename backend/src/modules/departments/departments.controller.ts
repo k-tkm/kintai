@@ -21,11 +21,7 @@ import { UpdateDepartmentDto } from './Dto/UpdateDepartmentDto';
 
 @Controller('departments')
 export class DepartmentsController {
-  constructor(
-    private departmentsService: DepartmentsService,
-    @InjectRepository(Department)
-    private departmentsRepository: Repository<Department>,
-  ) {}
+  constructor(private departmentsService: DepartmentsService) {}
 
   @UseGuards(JwtAuthGuard)
   @Get()
