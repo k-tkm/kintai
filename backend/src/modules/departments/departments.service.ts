@@ -114,6 +114,28 @@ export class DepartmentsService {
     return updatedUserDepartments;
   }
 
+  private async checkExistDuplicateName(
+    departmentName: string,
+    departmentID?: number,
+  ): Promise<boolean> {
+    const isExistDuplicateName = !!(await this.departmentsRepository.findOne({
+      where: departmentID
+        ? { id: Not(departmentID), name: departmentName }
+        : { name: departmentName },
+    }));
+    return isExistDuplicateName;
+  }
+
+  async validateDuplicateName(departmentName: string, departmentID?: number) {
+    const isExistDuplicateName = await this.checkExistDuplicateName(
+      departmentName,
+      departmentID,
+    );
+    if (isExistDuplicateName) {
+      throw new ConflictException('この部署名はすでに使用されています。');
+    }
+  }
+
   async getDepartments(): Promise<Department[]> {
     return await this.departmentsRepository.find({
       relations: ['userDepartments', 'userDepartments.user'],

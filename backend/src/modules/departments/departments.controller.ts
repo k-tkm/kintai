@@ -27,31 +27,6 @@ export class DepartmentsController {
     private departmentsRepository: Repository<Department>,
   ) {}
 
-  private async checkExistDuplicateName(
-    departmentName: string,
-    departmentID?: number,
-  ): Promise<boolean> {
-    const isExistDuplicateName = !!(await this.departmentsRepository.findOne({
-      where: departmentID
-        ? { id: Not(departmentID), name: departmentName }
-        : { name: departmentName },
-    }));
-    return isExistDuplicateName;
-  }
-
-  private async validateDuplicateName(
-    departmentName: string,
-    departmentID?: number,
-  ) {
-    const isExistDuplicateName = await this.checkExistDuplicateName(
-      departmentName,
-      departmentID,
-    );
-    if (isExistDuplicateName) {
-      throw new ConflictException('この部署名はすでに使用されています。');
-    }
-  }
-
   @UseGuards(JwtAuthGuard)
   @Get()
   async getDepartments(): Promise<Department[]> {
@@ -69,7 +44,7 @@ export class DepartmentsController {
   async create(
     @Body() departmentData: CreateDepartmentDto,
   ): Promise<Department> {
-    await this.validateDuplicateName(departmentData.name);
+    await this.departmentsService.validateDuplicateName(departmentData.name);
     return await this.departmentsService.create(departmentData);
   }
 
@@ -79,7 +54,10 @@ export class DepartmentsController {
     @Param() params: ParamsDto,
     @Body() departmentData: UpdateDepartmentDto,
   ): Promise<Department> {
-    await this.validateDuplicateName(departmentData.name, Number(params.id));
+    await this.departmentsService.validateDuplicateName(
+      departmentData.name,
+      Number(params.id),
+    );
     return await this.departmentsService.update(
       departmentData,
       Number(params.id),
