@@ -88,7 +88,7 @@ export class DepartmentsService {
     newUsersBelonging: User[],
     updatedDepartment: Department,
   ): Promise<UserDepartment[]> {
-    const userDepartments: UserDepartment[] = [];
+    let userDepartments: UserDepartment[] = [];
     if (newUsersBelonging) {
       const existUsersDepartments = await this.userDepartmentsRepository.find({
         where: { department: updatedDepartment.id },
@@ -102,11 +102,16 @@ export class DepartmentsService {
         newUsersBelonging: newUsersBelonging,
         existUsersDepartments: existUsersDepartments,
       });
-      for (const user of newUsersBelonging) {
-        userDepartments.push(
-          await this.updateBelonging({ user, department: updatedDepartment }),
-        );
-      }
+
+      userDepartments = await Promise.all(
+        newUsersBelonging.map(
+          async (u) =>
+            await this.updateBelonging({
+              user: u,
+              department: updatedDepartment,
+            }),
+        ),
+      );
     }
     const updatedUserDepartments = await this.userDepartmentsRepository.save(
       userDepartments,
@@ -153,21 +158,19 @@ export class DepartmentsService {
       name: departmentData.name,
     });
 
-    const userDepartments: UserDepartment[] = [];
+    let userDepartments: UserDepartment[] = [];
     if (departmentData.users.length) {
-      for (const user of departmentData.users) {
-        userDepartments.push(
-          this.userDepartmentsRepository.create({
-            department: newDepartment,
-            user: user,
-          }),
-        );
-      }
+      userDepartments = departmentData.users.map((u) => {
+        return this.userDepartmentsRepository.create({
+          department: newDepartment,
+          user: u,
+        });
+      });
     }
-
     const savedUserDepartment = await this.userDepartmentsRepository.save(
       userDepartments,
     );
+
     return { ...newDepartment, userDepartments: savedUserDepartment };
   }
 
