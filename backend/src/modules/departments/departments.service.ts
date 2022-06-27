@@ -54,7 +54,7 @@ export class DepartmentsService {
     }
   }
 
-  private async updateBelonging({
+  private async generateBelonging({
     user,
     department,
   }: {
@@ -106,7 +106,7 @@ export class DepartmentsService {
       userDepartments = await Promise.all(
         newUsersBelonging.map(
           async (u) =>
-            await this.updateBelonging({
+            await this.generateBelonging({
               user: u,
               department: updatedDepartment,
             }),
