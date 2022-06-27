@@ -111,12 +111,11 @@ export class DepartmentsService {
     newUsersBelonging: User[],
     updatedDepartment: Department,
   ): Promise<UserDepartment[]> {
+    const existUsersDepartments = await this.userDepartmentsRepository.find({
+      where: { department: updatedDepartment.id },
+      relations: ['user'],
+    });
     if (newUsersBelonging) {
-      const existUsersDepartments = await this.userDepartmentsRepository.find({
-        where: { department: updatedDepartment.id },
-        relations: ['user'],
-      });
-
       await this.removeBelonging({
         usersExcludeRemove: newUsersBelonging,
         existUsersDepartments: existUsersDepartments,
@@ -128,7 +127,7 @@ export class DepartmentsService {
       );
       return updatedUserDepartments;
     }
-    return [];
+    return existUsersDepartments;
   }
 
   private async findDepartmentByName(
