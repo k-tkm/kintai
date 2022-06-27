@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
+import { DepartmentsModule } from './modules/departments/departments.module';
 import { UsersController } from './modules/users/users.controller';
 import { UserModule } from './modules/users/users.module';
 
@@ -11,6 +12,7 @@ import { UserModule } from './modules/users/users.module';
   imports: [
     AuthModule,
     UserModule,
+    DepartmentsModule,
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',

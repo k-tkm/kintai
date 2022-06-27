@@ -2,17 +2,18 @@ import { DateTime } from 'luxon';
 import {
   Entity,
   PrimaryGeneratedColumn,
-  Column,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
   ManyToOne,
   JoinColumn,
+  Unique,
 } from 'typeorm';
 import { Department } from './Department.entity';
 import { User } from './User.entity';
 
 @Entity('user_departments')
+@Unique(['user', 'department'])
 export class UserDepartment {
   @PrimaryGeneratedColumn()
   id: number;
