@@ -43,6 +43,10 @@ export class DepartmentsService {
     usersExcludeRemove: User[];
     existUsersDepartments: UserDepartment[];
   }) {
+    if (usersExcludeRemove.length === 0) {
+      await this.removeAllBelonging(existUsersDepartments);
+      return;
+    }
     const newUsersIDs = usersExcludeRemove.map((u) => u.id);
     const deletedUserDepartmentsIDs = existUsersDepartments
       .filter((d) => !newUsersIDs.includes(d?.user.id))
@@ -84,39 +88,47 @@ export class DepartmentsService {
     return createdBelonging;
   }
 
+  private async updateAllBelonging(
+    newUsersBelonging: User[],
+    updatedDepartment: Department,
+  ): Promise<UserDepartment[]> {
+    const allBelonging = await Promise.all(
+      newUsersBelonging.map(
+        async (u) =>
+          await this.generateBelonging({
+            user: u,
+            department: updatedDepartment,
+          }),
+      ),
+    );
+    const updatedAllBelonging = await this.userDepartmentsRepository.save(
+      allBelonging,
+    );
+    return updatedAllBelonging;
+  }
+
   private async updateUserDepartments(
     newUsersBelonging: User[],
     updatedDepartment: Department,
   ): Promise<UserDepartment[]> {
-    let userDepartments: UserDepartment[] = [];
     if (newUsersBelonging) {
       const existUsersDepartments = await this.userDepartmentsRepository.find({
         where: { department: updatedDepartment.id },
         relations: ['user'],
       });
-      if (newUsersBelonging.length === 0) {
-        await this.removeAllBelonging(existUsersDepartments);
-        return;
-      }
+
       await this.removeBelonging({
         usersExcludeRemove: newUsersBelonging,
         existUsersDepartments: existUsersDepartments,
       });
 
-      userDepartments = await Promise.all(
-        newUsersBelonging.map(
-          async (u) =>
-            await this.generateBelonging({
-              user: u,
-              department: updatedDepartment,
-            }),
-        ),
+      const updatedUserDepartments = await this.updateAllBelonging(
+        newUsersBelonging,
+        updatedDepartment,
       );
+      return updatedUserDepartments;
     }
-    const updatedUserDepartments = await this.userDepartmentsRepository.save(
-      userDepartments,
-    );
-    return updatedUserDepartments;
+    return [];
   }
 
   private async findDepartmentByName(
