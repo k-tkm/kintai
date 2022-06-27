@@ -119,7 +119,7 @@ export class DepartmentsService {
     return updatedUserDepartments;
   }
 
-  private async findDepartmentWithDuplicateName(
+  private async findDepartmentByName(
     departmentName: string,
     departmentID?: number,
   ): Promise<Department> {
@@ -133,8 +133,10 @@ export class DepartmentsService {
   }
 
   async validateDuplicateName(departmentName: string, departmentID?: number) {
-    const departmentWithDuplicateName =
-      await this.findDepartmentWithDuplicateName(departmentName, departmentID);
+    const departmentWithDuplicateName = await this.findDepartmentByName(
+      departmentName,
+      departmentID,
+    );
     if (departmentWithDuplicateName) {
       throw new ConflictException('この部署名はすでに使用されています。');
     }
