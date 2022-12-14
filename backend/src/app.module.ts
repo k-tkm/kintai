@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AttendancesModule } from './modules/attendances/attendances.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { DepartmentsModule } from './modules/departments/departments.module';
 import { UsersController } from './modules/users/users.controller';
@@ -15,6 +16,7 @@ import { VacationsModule } from './modules/vacations/vacations.module';
     UserModule,
     DepartmentsModule,
     VacationsModule,
+    AttendancesModule,
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
