@@ -16,12 +16,12 @@ services:
     image: postgres:14
     container_name: kintai_postgres
     environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB= ${DB_DATABASE}
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=multi
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - kintai_postgres:/var/lib/postgresql/kintai_data
     ports:
       - 5435:5432
 volumes:
-  postgres:
+  kintai_postgres:
