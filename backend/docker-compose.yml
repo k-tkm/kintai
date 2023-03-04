@@ -6,26 +6,22 @@ services:
     tty: true
     restart: always
     ports:
-      - '9000:9000'
+      - '9002:9002'
     volumes:
       - type: bind
         source: .
         target: /backend
     env_file: .env
-  db:
-    image: mysql:8.0
-    container_name: mysql
-    restart: always
+  kintai_postgres:
+    image: postgres:14
+    container_name: kintai_postgres
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      TZ: 'Asia/Tokyo'
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB= ${DB_DATABASE}
     volumes:
-      - mysql-db:/var/lib/mysql
+      - postgres:/var/lib/postgresql/data
     ports:
-      - 3306:${DB_PORT}
+      - 5435:5432
 volumes:
-  mysql-db:
+  postgres:
