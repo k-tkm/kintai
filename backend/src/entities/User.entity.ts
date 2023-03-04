@@ -1,3 +1,4 @@
+import { Company } from './Company.entity';
 import { DateTime } from 'luxon';
 import {
   Entity,
@@ -7,6 +8,8 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Attendance } from './Attendance.entity';
 import { UserDepartment } from './UserDepartment.entity';
@@ -43,4 +46,8 @@ export class User {
 
   @OneToMany(() => UserDepartment, (userDepartment) => userDepartment.user)
   userDepartments: UserDepartment[];
+
+  @ManyToOne(() => Company, (company) => company.users)
+  @JoinColumn({ name: 'company_id' })
+  company: Company;
 }

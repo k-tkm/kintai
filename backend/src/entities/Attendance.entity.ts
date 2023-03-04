@@ -1,3 +1,4 @@
+import { Company } from './Company.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -41,4 +42,11 @@ export class Attendance {
   })
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @ManyToOne(() => Company, (company) => company.attendances, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'company_id' })
+  company: Company;
 }

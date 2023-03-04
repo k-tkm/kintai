@@ -1,3 +1,4 @@
+import { Company } from './Company.entity';
 import { DateTime } from 'luxon';
 import {
   Entity,
@@ -47,4 +48,11 @@ export class Vacation {
   })
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @ManyToOne(() => Company, (company) => company.vacations, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'company_id' })
+  company: Company;
 }

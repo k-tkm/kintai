@@ -1,3 +1,4 @@
+import { Company } from './Company.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,6 +7,8 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { UserDepartment } from './UserDepartment.entity';
 
@@ -31,4 +34,11 @@ export class Department {
     (userDepartment) => userDepartment.department,
   )
   userDepartments: UserDepartment[];
+
+  @ManyToOne(() => Company, (company) => company.departments, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'company_id' })
+  company: Company;
 }
