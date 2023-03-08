@@ -57,6 +57,9 @@ export class User {
   @OneToMany(() => UserDepartment, (userDepartment) => userDepartment.user)
   userDepartments: UserDepartment[];
 
+  @OneToMany(() => EmailCompanyMapping, (a) => a.user)
+  emailCompanyMapping?: EmailCompanyMapping[];
+
   @ManyToOne(() => Company, (company) => company.users)
   @JoinColumn({ name: 'company_id' })
   company: Company;

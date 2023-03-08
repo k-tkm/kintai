@@ -45,4 +45,7 @@ export class Company {
 
   @OneToMany(() => UserDepartment, (userDepartment) => userDepartment.company)
   userDepartments: UserDepartment[];
+
+  @OneToMany(() => EmailCompanyMapping, (a) => a.company)
+  emailCompanyMapping?: EmailCompanyMapping[];
 }
