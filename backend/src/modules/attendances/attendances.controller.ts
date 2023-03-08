@@ -25,9 +25,10 @@ export class AttendancesController {
   @UseGuards(JwtAuthGuard)
   @Get()
   getAttendances(
+    @Req() req: RequestWithUserID,
     @Query() query: getAttendancesQueryDto,
   ): Promise<Attendance[]> {
-    return this.attendancesService.getAttendances(query);
+    return this.attendancesService.getAttendances(query, req.user);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -36,7 +37,7 @@ export class AttendancesController {
     @Req() req: RequestWithUserID,
     @Body() newData: CreateAttendanceDto,
   ): Promise<Attendance> {
-    return this.attendancesService.create(req.user.userID, newData);
+    return this.attendancesService.create(req.user, newData);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -46,12 +47,12 @@ export class AttendancesController {
     @Param() params: FindOneParams,
     @Body() body: CreateAttendanceDto,
   ): Promise<Attendance> {
-    return this.attendancesService.update(params.id, req.user.userID, body);
+    return this.attendancesService.update(params.id, req.user, body);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   delete(@Req() req: RequestWithUserID, @Param() params: FindOneParams) {
-    return this.attendancesService.delete(req.user.userID, params.id);
+    return this.attendancesService.delete(req.user, params.id);
   }
 }

@@ -1,3 +1,4 @@
+import { defaultQuery } from './../../utils/defualt';
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Attendance } from 'src/entities/Attendance.entity';
@@ -16,8 +17,14 @@ export class AttendancesService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async getAttendances(query: getAttendancesQueryDto): Promise<Attendance[]> {
-    const attendances = await this.attendancesRepository
+  async getAttendances(
+    query: getAttendancesQueryDto,
+    reqUser: User,
+  ): Promise<Attendance[]> {
+    const attendances = await (
+      await defaultQuery(reqUser.company.id)
+    )
+      .getRepository(Attendance)
       .createQueryBuilder('attendances')
       .leftJoinAndSelect('attendances.user', 'u')
       .where('attendances.date between :startDate and :endDate', {
@@ -30,25 +37,29 @@ export class AttendancesService {
   }
 
   async create(
-    userID: number,
+    reqUser: User,
     newData: CreateAttendanceDto,
   ): Promise<Attendance> {
-    const requestUser = await this.usersRepository.findOne(userID);
-    return this.attendancesRepository.save({ ...newData, user: requestUser });
+    return await (await defaultQuery(reqUser.company.id))
+      .getRepository(Attendance)
+      .save({
+        ...newData,
+        user: reqUser,
+        company: reqUser.company,
+      });
   }
 
   async update(
     attendanceID: number,
-    userID: number,
+    reqUser: User,
     newDate: CreateAttendanceDto,
   ): Promise<Attendance> {
-    const existAttendance = await this.attendancesRepository.findOne(
-      attendanceID,
-      {
+    const existAttendance = await (await defaultQuery(reqUser.company.id))
+      .getRepository(Attendance)
+      .findOne(attendanceID, {
         relations: ['user'],
-      },
-    );
-    if (existAttendance.user.id !== userID) {
+      });
+    if (existAttendance.user.id !== reqUser.id) {
       throw new HttpException(
         {
           statusCode: 403,
@@ -57,21 +68,23 @@ export class AttendancesService {
         403,
       );
     }
-    return await this.attendancesRepository.save({
-      ...existAttendance,
-      ...newDate,
-      updatedAt: new Date(),
-    });
+    return await (await defaultQuery(reqUser.company.id))
+      .getRepository(Attendance)
+      .save({
+        ...existAttendance,
+        ...newDate,
+        company: reqUser.company,
+        updatedAt: new Date(),
+      });
   }
 
-  async delete(userID: number, attendanceID: number) {
-    const existAttendance = await this.attendancesRepository.findOne(
-      attendanceID,
-      {
+  async delete(reqUser: User, attendanceID: number) {
+    const existAttendance = await (await defaultQuery(reqUser.company.id))
+      .getRepository(Attendance)
+      .findOne(attendanceID, {
         relations: ['user'],
-      },
-    );
-    if (existAttendance.user.id !== userID) {
+      });
+    if (existAttendance.user.id !== reqUser.id) {
       throw new HttpException(
         {
           statusCode: 403,
@@ -81,6 +94,8 @@ export class AttendancesService {
       );
     }
 
-    await this.attendancesRepository.softDelete(existAttendance);
+    await (await defaultQuery(reqUser.company.id))
+      .getRepository(Attendance)
+      .softDelete(existAttendance);
   }
 }
