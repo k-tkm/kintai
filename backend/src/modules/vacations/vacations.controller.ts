@@ -40,7 +40,7 @@ export class VacationsController {
   ): Promise<Vacation> {
     return await this.vacationsService.getVacationDetail(
       Number(params.id),
-      req.use,
+      req.user,
     );
   }
 
