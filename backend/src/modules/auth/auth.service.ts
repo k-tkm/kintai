@@ -15,9 +15,9 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async generateToken(payload: { userID: number }): Promise<{ token: string }> {
+  async generateToken(payload: { userID: number }): Promise<string> {
     const token = this.jwtService.sign(payload);
-    return { token };
+    return token;
   }
 
   async validateUser(email: string, password: string): Promise<User> {
@@ -33,9 +33,11 @@ export class AuthService {
 
     const isAuth = await compare(password, user.password);
     if (!isAuth) {
-      throw new UnauthorizedException();
+      return null;
     }
 
-    return user;
+    const token = await this.generateToken({ userID: user.id });
+
+    return { ...user, token };
   }
 }

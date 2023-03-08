@@ -64,4 +64,6 @@ export class User {
   @ManyToOne(() => Company, (company) => company.users)
   @JoinColumn({ name: 'company_id' })
   company: Company;
+
+  token?: string;
 }
