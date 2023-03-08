@@ -14,7 +14,6 @@ import {
 import { Attendance } from './Attendance.entity';
 import { UserDepartment } from './UserDepartment.entity';
 import { Vacation } from './Vacation.entity';
-import { EmailCompanyMapping } from './EmailCompanyMapping';
 
 @Entity('users')
 export class User {
@@ -29,6 +28,16 @@ export class User {
 
   @Column({ type: 'varchar', length: 200 })
   lastName: string;
+
+  @Column({
+    type: 'varchar',
+    name: 'password',
+    length: 200,
+    nullable: false,
+    default: '',
+    select: false,
+  })
+  password?: string;
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;
