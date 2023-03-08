@@ -12,6 +12,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { UserDepartment } from './UserDepartment.entity';
+import { EmailCompanyMapping } from './EmailCompanyMapping';
 
 @Entity('companies')
 export class Company {
@@ -44,4 +45,7 @@ export class Company {
 
   @OneToMany(() => UserDepartment, (userDepartment) => userDepartment.company)
   userDepartments: UserDepartment[];
+
+  @OneToMany(() => EmailCompanyMapping, (a) => a.company)
+  emailCompanyMapping?: EmailCompanyMapping[];
 }

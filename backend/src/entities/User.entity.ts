@@ -14,6 +14,7 @@ import {
 import { Attendance } from './Attendance.entity';
 import { UserDepartment } from './UserDepartment.entity';
 import { Vacation } from './Vacation.entity';
+import { EmailCompanyMapping } from './EmailCompanyMapping';
 
 @Entity('users')
 export class User {
@@ -46,6 +47,9 @@ export class User {
 
   @OneToMany(() => UserDepartment, (userDepartment) => userDepartment.user)
   userDepartments: UserDepartment[];
+
+  @OneToMany(() => EmailCompanyMapping, (a) => a.user)
+  emailCompanyMapping?: EmailCompanyMapping[];
 
   @ManyToOne(() => Company, (company) => company.users)
   @JoinColumn({ name: 'company_id' })
