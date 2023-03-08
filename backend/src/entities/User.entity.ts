@@ -14,6 +14,7 @@ import {
 import { Attendance } from './Attendance.entity';
 import { UserDepartment } from './UserDepartment.entity';
 import { Vacation } from './Vacation.entity';
+import { EmailCompanyMapping } from './EmailCompanyMapping';
 
 @Entity('users')
 export class User {
