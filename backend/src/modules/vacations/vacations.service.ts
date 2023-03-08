@@ -1,3 +1,4 @@
+import { defaultQuery } from './../../utils/defualt';
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/User.entity';
@@ -35,15 +36,26 @@ export class VacationsService {
     }
   }
 
-  private async findVacationWithUser(vacationID: number): Promise<Vacation> {
-    return await this.vacationsRepository.findOne(vacationID, {
-      relations: ['user'],
-    });
+  private async findVacationWithUser(
+    vacationID: number,
+    companyId: number,
+  ): Promise<Vacation> {
+    return await (await defaultQuery(companyId))
+      .getRepository(Vacation)
+      .findOne(vacationID, {
+        relations: ['user'],
+      });
   }
 
-  async getVacations(query: getVacationsQueryDto): Promise<Vacation[]> {
+  async getVacations(
+    query: getVacationsQueryDto,
+    reqUser: User,
+  ): Promise<Vacation[]> {
     const { startDate, endDate, user_id } = query;
-    const vacations = await this.vacationsRepository
+    const vacations = await (
+      await defaultQuery(reqUser.company.id)
+    )
+      .getRepository(Vacation)
       .createQueryBuilder('vacations')
       .leftJoinAndSelect('vacations.user', 'u')
       .where('vacations.date between :startDate and :endDate', {
@@ -56,29 +68,36 @@ export class VacationsService {
     return vacations;
   }
 
-  async getVacationDetail(vacationID: number): Promise<Vacation> {
-    return await this.findVacationWithUser(vacationID);
+  async getVacationDetail(
+    vacationID: number,
+    reqUser: User,
+  ): Promise<Vacation> {
+    return await this.findVacationWithUser(vacationID, reqUser.company.id);
   }
 
-  async create(userID: number, newData: CreateVacationDto): Promise<Vacation> {
+  async create(reqUser: User, newData: CreateVacationDto): Promise<Vacation> {
     const { date, type, description } = newData;
-    const requestUser = await this.usersRepository.findOne(userID);
 
-    return await this.vacationsRepository.save({
-      date,
-      type,
-      description,
-      user: requestUser,
-    });
+    return await (await defaultQuery(reqUser.company.id))
+      .getRepository(Vacation)
+      .save({
+        date,
+        type,
+        description,
+        user: reqUser,
+      });
   }
 
   async update(
     vacationID: number,
-    userID: number,
+    reqUser: User,
     newData: UpdateDepartmentDto,
   ): Promise<Vacation> {
-    const existVacation = await this.findVacationWithUser(vacationID);
-    await this.checkPermission({ existVacation, userID });
+    const existVacation = await this.findVacationWithUser(
+      vacationID,
+      reqUser.company.id,
+    );
+    await this.checkPermission({ existVacation, userID: reqUser.id });
     return await this.vacationsRepository.save({
       ...existVacation,
       ...newData,
@@ -86,9 +105,14 @@ export class VacationsService {
     });
   }
 
-  async delete(vacationID: number, userID: number) {
-    const existVacation = await this.findVacationWithUser(vacationID);
-    await this.checkPermission({ existVacation, userID });
-    await this.vacationsRepository.softDelete(existVacation);
+  async delete(vacationID: number, reqUser: User) {
+    const existVacation = await this.findVacationWithUser(
+      vacationID,
+      reqUser.company.id,
+    );
+    await this.checkPermission({ existVacation, userID: reqUser.id });
+    await (await defaultQuery(reqUser.company.id))
+      .getRepository(Vacation)
+      .softDelete(existVacation);
   }
 }
