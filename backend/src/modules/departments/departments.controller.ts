@@ -1,3 +1,4 @@
+import { RequestWithUserID } from 'src/utils/type';
 import {
   Body,
   ConflictException,
@@ -8,6 +9,7 @@ import {
   Param,
   Post,
   Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -25,23 +27,30 @@ export class DepartmentsController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async getDepartments(): Promise<Department[]> {
-    return await this.departmentsService.getDepartments();
+  async getDepartments(@Req() req: RequestWithUserID): Promise<Department[]> {
+    return await this.departmentsService.getDepartments(req.user);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async getDepartmentDetail(@Param() params: ParamsDto): Promise<Department> {
-    return await this.departmentsService.getDepartmentDetail(Number(params.id));
+  async getDepartmentDetail(
+    @Param() params: ParamsDto,
+    @Req() req: RequestWithUserID,
+  ): Promise<Department> {
+    return await this.departmentsService.getDepartmentDetail(
+      Number(params.id),
+      req.user,
+    );
   }
 
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(
     @Body() departmentData: CreateDepartmentDto,
+    @Req() req: RequestWithUserID,
   ): Promise<Department> {
     await this.departmentsService.validateDuplicateName(departmentData.name);
-    return await this.departmentsService.create(departmentData);
+    return await this.departmentsService.create(departmentData, req.user);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -49,6 +58,7 @@ export class DepartmentsController {
   async update(
     @Param() params: ParamsDto,
     @Body() departmentData: UpdateDepartmentDto,
+    @Req() req: RequestWithUserID,
   ): Promise<Department> {
     await this.departmentsService.validateDuplicateName(
       departmentData.name,
@@ -57,6 +67,7 @@ export class DepartmentsController {
     return await this.departmentsService.update(
       departmentData,
       Number(params.id),
+      req.user,
     );
   }
 

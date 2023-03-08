@@ -1,3 +1,4 @@
+import { defaultQuery } from './../../utils/defualt';
 import { ConflictException, HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Department } from 'src/entities/Department.entity';
@@ -17,34 +18,49 @@ export class DepartmentsService {
     private userDepartmentsRepository: Repository<UserDepartment>,
   ) {}
 
-  private async findDepartmentByID(departmentID: number): Promise<Department> {
-    return await this.departmentsRepository.findOne(departmentID);
+  private async findDepartmentByID(
+    departmentID: number,
+    companyId: number,
+  ): Promise<Department> {
+    return await (await defaultQuery(companyId))
+      .getRepository(Department)
+      .findOne(departmentID);
   }
 
-  private async findeUserDepartmentWithDeleted(
+  private async foundUserDepartmentWithDeleted(
     userID: number,
     departmentID: number,
+    companyID: number,
   ): Promise<UserDepartment> {
-    return await this.userDepartmentsRepository.findOne({
-      where: { user: userID, department: departmentID },
-      withDeleted: true,
-    });
+    return await (await defaultQuery(companyID))
+      .getRepository(UserDepartment)
+      .findOne({
+        where: { user: userID, department: departmentID },
+        withDeleted: true,
+      });
   }
 
-  private async removeAllBelonging(existUsersDepartments: UserDepartment[]) {
+  private async removeAllBelonging(
+    existUsersDepartments: UserDepartment[],
+    companyId: number,
+  ) {
     const existUsersDepartmentIds = existUsersDepartments.map((d) => d.id);
-    await this.userDepartmentsRepository.softDelete(existUsersDepartmentIds);
+    await (await defaultQuery(companyId))
+      .getRepository(UserDepartment)
+      .softDelete(existUsersDepartmentIds);
   }
 
   private async removeBelonging({
     usersExcludeRemove,
     existUsersDepartments,
+    companyId,
   }: {
     usersExcludeRemove: User[];
     existUsersDepartments: UserDepartment[];
+    companyId: number;
   }) {
     if (usersExcludeRemove.length === 0) {
-      await this.removeAllBelonging(existUsersDepartments);
+      await this.removeAllBelonging(existUsersDepartments, companyId);
       return;
     }
     const newUsersIDs = usersExcludeRemove.map((u) => u.id);
@@ -52,22 +68,25 @@ export class DepartmentsService {
       .filter((d) => !newUsersIDs.includes(d?.user.id))
       .map((d) => d.id);
     if (deletedUserDepartmentsIDs.length) {
-      await this.userDepartmentsRepository.softDelete(
-        deletedUserDepartmentsIDs,
-      );
+      await (await defaultQuery(companyId))
+        .getRepository(UserDepartment)
+        .softDelete(deletedUserDepartmentsIDs);
     }
   }
 
   private async generateBelonging({
     user,
     department,
+    companyId,
   }: {
     user: User;
     department: Department;
+    companyId: number;
   }): Promise<UserDepartment> {
-    const existUsersDepartment = await this.findeUserDepartmentWithDeleted(
+    const existUsersDepartment = await this.foundUserDepartmentWithDeleted(
       user.id,
       department.id,
+      companyId,
     );
 
     if (existUsersDepartment) {
@@ -91,6 +110,7 @@ export class DepartmentsService {
   private async updateAllBelonging(
     newUsersBelonging: User[],
     updatedDepartment: Department,
+    companyId: number,
   ): Promise<UserDepartment[]> {
     const allBelonging = await Promise.all(
       newUsersBelonging.map(
@@ -98,32 +118,38 @@ export class DepartmentsService {
           await this.generateBelonging({
             user: u,
             department: updatedDepartment,
+            companyId,
           }),
       ),
     );
-    const updatedAllBelonging = await this.userDepartmentsRepository.save(
-      allBelonging,
-    );
+    const updatedAllBelonging = await (await defaultQuery(companyId))
+      .getRepository(UserDepartment)
+      .save(allBelonging);
     return updatedAllBelonging;
   }
 
   private async updateUserDepartments(
     newUsersBelonging: User[],
     updatedDepartment: Department,
+    companyId: number,
   ): Promise<UserDepartment[]> {
-    const existUsersDepartments = await this.userDepartmentsRepository.find({
-      where: { department: updatedDepartment.id },
-      relations: ['user'],
-    });
+    const existUsersDepartments = await (await defaultQuery(companyId))
+      .getRepository(UserDepartment)
+      .find({
+        where: { department: updatedDepartment.id },
+        relations: ['user'],
+      });
     if (newUsersBelonging) {
       await this.removeBelonging({
         usersExcludeRemove: newUsersBelonging,
         existUsersDepartments: existUsersDepartments,
+        companyId,
       });
 
       const updatedUserDepartments = await this.updateAllBelonging(
         newUsersBelonging,
         updatedDepartment,
+        companyId,
       );
       return updatedUserDepartments;
     }
@@ -153,22 +179,36 @@ export class DepartmentsService {
     }
   }
 
-  async getDepartments(): Promise<Department[]> {
-    return await this.departmentsRepository.find({
-      relations: ['userDepartments', 'userDepartments.user'],
-    });
+  async getDepartments(reqUser: User): Promise<Department[]> {
+    return await (await defaultQuery(reqUser.company.id))
+      .getRepository(Department)
+      .find({
+        relations: ['userDepartments', 'userDepartments.user'],
+      });
   }
 
-  async getDepartmentDetail(departmentID: number): Promise<Department> {
-    return await this.departmentsRepository.findOne(departmentID, {
-      relations: ['userDepartments', 'userDepartments.user'],
-    });
+  async getDepartmentDetail(
+    departmentID: number,
+    reqUser: User,
+  ): Promise<Department> {
+    return await (await defaultQuery(reqUser.company.id))
+      .getRepository(Department)
+      .findOne(departmentID, {
+        relations: ['userDepartments', 'userDepartments.user'],
+      });
   }
 
-  async create(departmentData: CreateDepartmentDto): Promise<Department> {
-    const newDepartment: Department = await this.departmentsRepository.save({
-      name: departmentData.name,
-    });
+  async create(
+    departmentData: CreateDepartmentDto,
+    reqUser: User,
+  ): Promise<Department> {
+    const newDepartment: Department = await (
+      await defaultQuery(reqUser.company.id)
+    )
+      .getRepository(Department)
+      .save({
+        name: departmentData.name,
+      });
 
     let userDepartments: UserDepartment[] = [];
     if (departmentData.users.length) {
@@ -179,9 +219,9 @@ export class DepartmentsService {
         });
       });
     }
-    const savedUserDepartment = await this.userDepartmentsRepository.save(
-      userDepartments,
-    );
+    const savedUserDepartment = await (await defaultQuery(reqUser.company.id))
+      .getRepository(UserDepartment)
+      .save(userDepartments);
 
     return { ...newDepartment, userDepartments: savedUserDepartment };
   }
@@ -189,18 +229,25 @@ export class DepartmentsService {
   async update(
     departmentData: UpdateDepartmentDto,
     departmentID: number,
+    reqUser: User,
   ): Promise<Department> {
-    const existDepartment = await this.findDepartmentByID(departmentID);
-    const updatedDepartment: Department = await this.departmentsRepository.save(
-      {
+    const existDepartment = await this.findDepartmentByID(
+      departmentID,
+      reqUser.company.id,
+    );
+    const updatedDepartment: Department = await (
+      await defaultQuery(reqUser.company.id)
+    )
+      .getRepository(Department)
+      .save({
         ...existDepartment,
         name: departmentData.name,
         updatedAt: new Date(),
-      },
-    );
+      });
     const updatedUserDepartments = await this.updateUserDepartments(
       departmentData.users,
       updatedDepartment,
+      reqUser.company.id,
     );
     return { ...updatedDepartment, userDepartments: updatedUserDepartments };
   }
