@@ -12,9 +12,12 @@ export class UsersService {
   ) {}
 
   private async findUserByEmail(email: string): Promise<User> {
-    return await this.usersRepository.findOne({
-      email: email,
-    });
+    return await this.usersRepository.findOne(
+      {
+        email: email,
+      },
+      { relations: ['company'] },
+    );
   }
 
   async getUsers(): Promise<User[]> {
@@ -25,7 +28,7 @@ export class UsersService {
 
   async getUserDetail(userID: number): Promise<User> {
     return await this.usersRepository.findOne(userID, {
-      relations: ['userDepartments', 'userDepartments.department'],
+      relations: ['userDepartments', 'userDepartments.department', 'company'],
     });
   }
 
