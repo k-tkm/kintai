@@ -17,5 +17,5 @@
 # 環境のセットアップ
 - .env.exampleを元に.envを作成
 - このディレクトリで`docker-compose up`を実行
-
+- テーブルを作成するために`yarn migration:run`を実行
 
