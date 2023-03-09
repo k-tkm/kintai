@@ -34,7 +34,7 @@ export class UsersController {
   }
 
   @Post()
-  async save(@Body() userData: SaveUserDto): Promise<{ token: string }> {
+  async save(@Body() userData: SaveUserDto): Promise<string> {
     const savedUser = await this.usersService.save(userData);
     const payload = {
       userID: savedUser.id,
