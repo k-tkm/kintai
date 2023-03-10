@@ -5,7 +5,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { compare, hash } from 'bcrypt';
+import { compareSync, hashSync } from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +16,7 @@ export class AuthService {
   ) {}
 
   async register(newUser: User, reqUser: User): Promise<User> {
-    const hashedPassword = await hash(newUser.password, 10);
+    const hashedPassword = await hashSync(newUser.password, 10);
     const createdUser = await (await defaultQuery(reqUser.company.id))
       .getRepository(User)
       .save({
@@ -52,7 +52,7 @@ export class AuthService {
       .getRepository(User)
       .findOne({ email }, { select: ['password'] });
 
-    const isAuth = await compare(password, user.password);
+    const isAuth = await compareSync(password, user.password);
     if (!isAuth) {
       return null;
     }
