@@ -1,5 +1,5 @@
 import { defaultQuery } from './../../utils/defualt';
-import { EmailCompanyMapping } from './../../entities/EmailCompanyMapping';
+import { EmailCompanyMapping } from '../../entities/EmailCompanyMapping.entity';
 import { User } from 'src/entities/User.entity';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';

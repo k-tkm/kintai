@@ -1,4 +1,4 @@
-import { EmailCompanyMapping } from './../../entities/EmailCompanyMapping';
+import { EmailCompanyMapping } from '../../entities/EmailCompanyMapping.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';

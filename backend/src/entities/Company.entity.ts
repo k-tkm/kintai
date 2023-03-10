@@ -12,7 +12,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { UserDepartment } from './UserDepartment.entity';
-import { EmailCompanyMapping } from './EmailCompanyMapping';
+import { EmailCompanyMapping } from './EmailCompanyMapping.entity';
 
 @Entity('companies')
 export class Company {
